@@ -7,11 +7,11 @@
 #define TIMEOUT_SECONDS 600
 #define TEXT_TO_LOOK_FOR @"Welcome to React"
 
-@interface wandermate_AppTests : XCTestCase
+@interface WandermateTests : XCTestCase
 
 @end
 
-@implementation wandermate_AppTests
+@implementation WandermateTests
 
 - (BOOL)findSubviewInView:(UIView *)view matching:(BOOL (^)(UIView *view))test
 {
