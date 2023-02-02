@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "367910959379",
+    "project_id": "wandermate-defbe",
+    "storage_bucket": "wandermate-defbe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367910959379:android:cd6cf281de96b47ba742e6",
+        "android_client_info": {
+          "package_name": "com.wandermate_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "367910959379-8ge5sgou17e0ch8dsu6tc074pbbrb1vp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wandermate_app",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "367910959379-bgtc0fo0tko1hmctn3umhpnki15kdmcm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl0ues0Kqpq67Bv-TUKxGtkWwL86NdAqA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367910959379-bgtc0fo0tko1hmctn3umhpnki15kdmcm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
