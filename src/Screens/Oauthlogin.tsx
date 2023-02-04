@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, StyleSheet, View, Image, Pressable} from 'react-native';
+import {Text, StyleSheet, View, Image, Pressable, Alert} from 'react-native';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {Route} from '../config/constraint';
 
@@ -18,6 +18,10 @@ export default function Oauthlogin({navigation}) {
         navigation.navigate(Route.ButtonNavigator);
       }
     } catch (error) {
+      Alert.alert(
+        'We will Grand you offline access this time ',
+        'Offline access is a pro feature, but we will let you try it out just this time',
+      );
       console.log(error);
     }
   };
