@@ -1,17 +1,30 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
-import {Image, ImageBackground, ScrollView, View} from 'react-native';
-import {Text} from 'react-native-paper';
+import {
+  Image,
+  ImageBackground,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  View,
+} from 'react-native';
+import {AnimatedFAB, Drawer, FAB, Text} from 'react-native-paper';
 import {Searchbar} from 'react-native-paper';
 import Geolocation from '@react-native-community/geolocation';
 import Entypo from 'react-native-vector-icons/Entypo';
+import {HeritageCard} from '../Components/HeirtageHomePageCard';
+import {color, fonts, Route} from '../config/constraint';
+import {fetchBackend} from '../config/FetchData';
+import {BottomScroll} from '../Components/BottomSheet';
+import {CategoryCard} from '../Components/CategoryCard';
+import {FestivalCard} from '../Components/FestivalsCard';
 
 const currentDate = new Date();
 const dayHour = currentDate.getHours();
 var Greetings: string;
 if (dayHour <= 11) {
   Greetings = 'Good Morning';
-} else if (dayHour <= 13) {
+} else if (dayHour <= 16) {
   Greetings = 'Good Afternoon';
 } else if (dayHour <= 19) {
   Greetings = 'Good Evening';
@@ -19,7 +32,7 @@ if (dayHour <= 11) {
   Greetings = 'Good Night';
 }
 
-export default function HomePage() {
+export default function HomePage({navigation}) {
   // settingup weather state to display current weather on the screen
   const [weather, setWeather] = useState<{temp: string; icon: string}>({
     temp: '10',
@@ -36,6 +49,12 @@ export default function HomePage() {
     Geolocation.getCurrentPosition(info => setGetLocation(info));
     // accessing the user current location and setting it on the state
   }, []);
+  const [isExtended, setIsExtended] = React.useState(true);
+  const [heritage, setHeritage] = useState<{
+    featureImage: string;
+    title: string;
+    address: string;
+  }>();
 
   useEffect(() => {
     axios({
@@ -56,244 +75,265 @@ export default function HomePage() {
   }, [geoLocation]);
 
   return (
-    <>
+    <View style={{backgroundColor: 'black', flex: 1}}>
       <View>
-        <ImageBackground
-          source={{
-            uri: 'https://images.unsplash.com/photo-1607836046730-3317bd58a31b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-          }}
-          style={{height: 300}}>
+        <View
+          style={{
+            top: 15,
+            marginBottom: 20,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            paddingHorizontal: 10,
+            paddingTop: 10,
+          }}>
           <View
             style={{
-              top: 15,
+              // backgroundColor: 'hsla(0, 1%, 100%, 0.57)',
+              borderRadius: 10,
               flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingHorizontal: 10,
-              paddingTop: 10,
+              gap: 10,
+              padding: 10,
             }}>
-            <View
+            <Image
+              source={{
+                uri: 'https://images.goodsmile.info/cgm/images/product/20200513/9505/69654/large/a3b56bccc98a8d4282224f40806415ff.jpg',
+              }}
               style={{
-                backgroundColor: 'hsla(0, 1%, 100%, 0.57)',
+                resizeMode: 'contain',
+                height: 50,
+                width: 50,
                 borderRadius: 10,
-                flexDirection: 'row',
-                gap: 10,
-                padding: 10,
-              }}>
-              <Image
-                source={{
-                  uri: 'https://variety.com/wp-content/uploads/2022/11/Screen-Shot-2022-11-02-at-8.33.52-AM.png',
-                }}
+                borderColor: color.Primary,
+                borderWidth: 1,
+              }}
+            />
+            <View>
+              <Text
                 style={{
-                  resizeMode: 'contain',
-                  height: 30,
-                  width: 30,
-                  borderRadius: 50,
-                }}
-              />
-              <View>
-                <Text style={{fontSize: 10}}>{Greetings}!</Text>
-                <Text style={{fontWeight: 'bold'}}>Sewak Gautam</Text>
-              </View>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 0.5,
-                paddingHorizontal: 10,
-                borderRadius: 10,
-                backgroundColor: 'hsla(0, 1%, 100%, 0.57)',
-              }}>
-              <View style={{flexDirection: 'row'}}>
-                <Text
-                  style={{fontSize: 20, lineHeight: 30, fontWeight: 'bold'}}>
-                  {(+weather.temp | 0) - 3}
-                </Text>
-                {/* decreasing the weather value by 3 beacaues while testing we got temperature more than 3 from the real temperature */}
-                <Text style={{fontSize: 15, lineHeight: 20}}>o</Text>
-                <Text style={{fontSize: 18, lineHeight: 25}}>C</Text>
-              </View>
-              <Image
-                source={{uri: `http:${weather.icon}`}}
+                  color: 'white',
+                  fontSize: 14,
+                  fontFamily: fonts.light,
+                }}>
+                {Greetings}!
+              </Text>
+              <Text
                 style={{
-                  height: 50,
-                  width: 50,
-                }}
-              />
+                  color: 'white',
+                  fontSize: 20,
+                  fontFamily: fonts.bold,
+                }}>
+                Sewak Gautam
+              </Text>
             </View>
           </View>
-        </ImageBackground>
+          <Pressable
+            onPress={() => navigation.navigate(Route.Weather)}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 0.5,
+              height: 60,
+              paddingHorizontal: 10,
+              borderRadius: 10,
+              backgroundColor: color.Accent,
+            }}>
+            <View style={{flexDirection: 'row'}}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: 'white',
+                  lineHeight: 30,
+                  // fontWeight: 'bold',
+                  fontFamily: fonts.bold,
+                }}>
+                {(+weather.temp | 0) - 2}
+              </Text>
+              {/* decreasing the weather value by 2 beacaues while testing we got temperature more than 2 from the real temperature */}
+              <Text
+                style={{
+                  fontSize: 15,
+                  color: 'white',
+                  lineHeight: 20,
+                  fontFamily: fonts.medium,
+                }}>
+                o
+              </Text>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: 'white',
+                  lineHeight: 25,
+                  fontFamily: fonts.medium,
+                }}>
+                C
+              </Text>
+            </View>
+            <Image
+              source={{uri: `http:${weather.icon}`}}
+              style={{
+                height: 50,
+                width: 50,
+              }}
+            />
+          </Pressable>
+        </View>
+        <View style={{marginHorizontal: 20, marginVertical: 20}}>
+          <Text
+            style={{
+              // fontWeight: 'bold',
+              fontSize: 30,
+              color: 'white',
+              marginRight: 120,
+              fontFamily: fonts.bold,
+            }}>
+            Explore the Beauty of Nepal !
+          </Text>
+        </View>
         <View>
           <Searchbar
             style={{
-              top: -20,
               justifyContent: 'center',
               marginHorizontal: 20,
-              borderRadius: 5,
+              borderRadius: 20,
+              backgroundColor: '#1C1C1C',
             }}
-            selectionColor="#0D3A83"
+            selectionColor={color.Primary}
+            iconColor="gray"
+            inputStyle={{color: 'white'}}
             placeholder="Where You are Going ?"
             placeholderTextColor={'gray'}
             elevation={2}
-            onChangeText={text => setSearchQuery(text)}
+            onChangeText={() => {
+              <BottomScroll />;
+            }}
             value={searchQuery}
           />
         </View>
       </View>
-      <ScrollView style={{marginLeft: 20}}>
+      <ScrollView
+        style={{marginLeft: 25, marginTop: 20}}
+        showsVerticalScrollIndicator={false}>
         <View>
-          <Text style={{fontWeight: 'bold', fontSize: 20}}>Explore Nepal</Text>
           <Text
             style={{
-              fontWeight: 'bold',
-              fontSize: 15,
-              paddingVertical: 10,
-              color: '#0D3A83',
+              fontSize: 25,
+              color: 'white',
+              fontFamily: fonts.medium,
             }}>
-            Recommended
+            Category
           </Text>
-          <ScrollView horizontal style={{height: 240}}>
-            <View
-              style={{
-                backgroundColor: 'white',
-                elevation: 5,
-                marginLeft: 10,
-                height: 230,
-                width: 180,
-                borderRadius: 20,
-              }}>
-              <Image
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1620903376453-25f5a6fd533e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80',
-                }}
-                style={{
-                  resizeMode: 'cover',
-                  margin: 10,
-                  height: 130,
-                  width: 160,
-                  borderRadius: 10,
-                }}
-              />
-              <Text
-                style={{
-                  marginHorizontal: 10,
-                  fontWeight: 'bold',
-                  paddingBottom: 10,
-                  fontSize: 20,
-                }}>
-                Kanyam
-              </Text>
-              <View
-                style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-                <View style={{flexDirection: 'row'}}>
-                  <Entypo name={'location-pin'} size={20} color={'#0D3A83'} />
-                  <Text style={{fontSize: 15, fontWeight: '700'}}>Ilam</Text>
-                </View>
-                <View
-                  style={{
-                    backgroundColor: '#F5F5F5',
-                    borderRadius: 50,
-                    paddingHorizontal: 10,
-                  }}>
-                  <Text>200 Km away</Text>
-                </View>
-              </View>
-            </View>
-            <View
-              style={{
-                backgroundColor: 'white',
-                elevation: 5,
-                marginLeft: 10,
-                height: 230,
-                width: 180,
-                borderRadius: 20,
-              }}>
-              <Image
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1620903376453-25f5a6fd533e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80',
-                }}
-                style={{
-                  resizeMode: 'cover',
-                  margin: 10,
-                  height: 130,
-                  width: 160,
-                  borderRadius: 10,
-                }}
-              />
-              <Text
-                style={{
-                  marginHorizontal: 10,
-                  fontWeight: 'bold',
-                  paddingBottom: 10,
-                  fontSize: 20,
-                }}>
-                Kanyam
-              </Text>
-              <View
-                style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-                <View style={{flexDirection: 'row'}}>
-                  <Entypo name={'location-pin'} size={20} color={'#0D3A83'} />
-                  <Text style={{fontSize: 15, fontWeight: '700'}}>Ilam</Text>
-                </View>
-                <View
-                  style={{
-                    backgroundColor: '#F5F5F5',
-                    borderRadius: 50,
-                    paddingHorizontal: 10,
-                  }}>
-                  <Text>200 Km away</Text>
-                </View>
-              </View>
-            </View>
-            <View
-              style={{
-                backgroundColor: 'white',
-                elevation: 5,
-                marginHorizontal: 10,
-                height: 230,
-                width: 180,
-                borderRadius: 20,
-              }}>
-              <Image
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1544015759-237f87d55ef3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80',
-                }}
-                style={{
-                  resizeMode: 'cover',
-                  margin: 10,
-                  height: 130,
-                  width: 160,
-                  borderRadius: 10,
-                }}
-              />
-              <Text
-                style={{
-                  marginHorizontal: 10,
-                  fontWeight: 'bold',
-                  paddingBottom: 10,
-                  fontSize: 20,
-                }}>
-                Kanyam
-              </Text>
-              <View
-                style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-                <View style={{flexDirection: 'row'}}>
-                  <Entypo name={'location-pin'} size={20} color={'#0D3A83'} />
-                  <Text style={{fontSize: 15, fontWeight: '700'}}>Ilam</Text>
-                </View>
-                <View
-                  style={{
-                    backgroundColor: '#F5F5F5',
-                    borderRadius: 50,
-                    paddingHorizontal: 10,
-                  }}>
-                  <Text>200 Km away</Text>
-                </View>
-              </View>
-            </View>
+          <ScrollView
+            showsHorizontalScrollIndicator={false}
+            alwaysBounceHorizontal
+            horizontal
+            style={{marginVertical: 20}}>
+            <CategoryCard
+              categoryName={'Lakes'}
+              categoryImage={
+                'https://cdn-icons-png.flaticon.com/512/2151/2151296.png'
+              }
+            />
+            <CategoryCard
+              categoryName={'River'}
+              categoryImage={
+                'https://www.pngall.com/wp-content/uploads/9/City-River-PNG-Clipart.png'
+              }
+            />
+            <CategoryCard
+              categoryName={'Mountains'}
+              categoryImage={
+                'https://static.vecteezy.com/system/resources/previews/014/037/394/original/illustration-of-mountains-png.png'
+              }
+            />
+            <CategoryCard
+              categoryName={'Beach'}
+              categoryImage={
+                'https://static.vecteezy.com/system/resources/previews/010/794/497/original/beach-3d-illustration-png.png'
+              }
+            />
+          </ScrollView>
+        </View>
+        <View>
+          <Text
+            style={{
+              fontSize: 25,
+              color: 'white',
+              fontFamily: fonts.regular,
+            }}>
+            Popular Destinations
+          </Text>
+
+          <ScrollView
+            showsHorizontalScrollIndicator={false}
+            horizontal
+            style={{height: 240}}>
+            <HeritageCard
+              imageLink={
+                'https://images.unsplash.com/photo-1620903376453-25f5a6fd533e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80'
+              }
+              planceName={'Kanyam'}
+              address={'Ilam'}
+              farFromUser={'2 Hour'}
+            />
+            <HeritageCard
+              imageLink={
+                'https://images.unsplash.com/photo-1620903376453-25f5a6fd533e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80'
+              }
+              planceName={'Kanyam'}
+              address={'Ilam'}
+              farFromUser={'200 Km away'}
+            />
+            <HeritageCard
+              imageLink={
+                'https://images.unsplash.com/photo-1620903376453-25f5a6fd533e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80'
+              }
+              planceName={'Kanyam'}
+              address={'Ilam'}
+              farFromUser={'200 Km away'}
+            />
+            <HeritageCard
+              imageLink={
+                'https://images.unsplash.com/photo-1620903376453-25f5a6fd533e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80'
+              }
+              planceName={'Kanyam'}
+              address={'Ilam'}
+              farFromUser={'200 Km away'}
+            />
+          </ScrollView>
+        </View>
+        <View style={{marginVertical: 20}}>
+          <Text
+            style={{
+              fontSize: 25,
+              color: 'white',
+              fontFamily: fonts.medium,
+            }}>
+            Upcoming Festivals
+          </Text>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={{marginVertical: 10}}>
+            <FestivalCard
+              festivalDescription={
+                'Dashain or Badadashain, also referred as Bijaya Dashami in Sanskrit, is a major Hindu religious festival in Nepal. It is also celebrated by Hindus of Nepal and elsewhere in the world ....'
+              }
+              festivalTitle={'Dashain'}
+              festivalImage={
+                'https://myrepublica.nagariknetwork.com/uploads/media/1506759324794_RS_KTM_20170930__MG_0473.JPG'
+              }
+            />
+            <FestivalCard
+              festivalDescription={
+                'Tihar (also known as Deepawali and Yamapanchak) is a five-day Hindu festival celebrated in Nepal and the Indian states of Sikkim and West Bengal, ....'
+              }
+              festivalTitle={'Tihar'}
+              festivalImage={
+                'https://data.tibettravel.org/assets/images/nepal/nepal-festival/nepal-light-festival.jpg'
+              }
+            />
           </ScrollView>
         </View>
       </ScrollView>
-    </>
+    </View>
   );
 }

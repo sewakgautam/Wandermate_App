@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Text, StyleSheet, View, Image, Pressable, Alert} from 'react-native';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {Route} from '../config/constraint';
+import {color, fonts, Route} from '../config/constraint';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-export default function Oauthlogin({navigation}) {
+export default function Oauthlogin({navigation}: {navigation: any}) {
+  // const [userInfo, setUserInfo] = useState({any});
   const signIn = async () => {
     try {
       GoogleSignin.configure({
@@ -12,21 +14,22 @@ export default function Oauthlogin({navigation}) {
       });
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      // this.setState({userInfo});
+      // setUserInfo(userInfo);
       console.log(userInfo);
+
       if (userInfo) {
         navigation.navigate(Route.ButtonNavigator);
       }
     } catch (error) {
       Alert.alert(
-        'We will Grand you offline access this time ',
-        'Offline access is a pro feature, but we will let you try it out just this time',
+        'We Cannot Give Grand you offline access this time ',
+        'Offline access is a pro feature, Without Internet Our System cannot Perform well',
       );
       console.log(error);
     }
   };
   return (
-    <View style={{backgroundColor: 'white', flex: 1}}>
+    <View style={{backgroundColor: color.Background, flex: 1}}>
       <View>
         <Image
           source={require('../../assets/img/DesignAsset/OnboardOauth.png')}
@@ -40,12 +43,33 @@ export default function Oauthlogin({navigation}) {
           our Privacy and Cookie Statement.
         </Text>
       </View>
-      <View style={{gap: 20, alignItems: 'center'}}>
-        <Pressable style={styles.oauthbtn} onPress={() => signIn()}>
+      <View style={{gap: -10, alignItems: 'center'}}>
+        <Pressable
+          style={[styles.oauthbtn, {backgroundColor: color.Primary}]}
+          onPress={() => navigation.navigate(Route.Login)}>
           <View
             style={{
               display: 'flex',
               flexDirection: 'row',
+              gap: 10,
+              alignItems: 'center',
+            }}>
+            <MaterialCommunityIcons
+              name="email"
+              style={{height: 20, width: 25, marginHorizontal: 10}}
+              color={color}
+              size={24}
+            />
+
+            <Text style={styles.btnText}>Continue With Email</Text>
+          </View>
+        </Pressable>
+        <Pressable style={[styles.oauthbtn]} onPress={() => signIn()}>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: 10,
             }}>
             <Image
               source={{
@@ -54,14 +78,9 @@ export default function Oauthlogin({navigation}) {
               style={{height: 20, width: 20, marginHorizontal: 10}}
             />
 
-            <Text style={styles.btnText}>Sign Up With Google</Text>
+            <Text style={styles.btnText}>Continue With Google</Text>
           </View>
         </Pressable>
-        <Text
-          onPress={() => navigation.navigate(Route.Login)}
-          style={{color: 'black'}}>
-          More Sign in Options
-        </Text>
       </View>
     </View>
   );
@@ -74,7 +93,8 @@ const styles = StyleSheet.create({
     marginTop: -45,
   },
   oauthbtn: {
-    marginTop: 40,
+    marginTop: 20,
+    width: 300,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
@@ -82,19 +102,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     marginHorizontal: 30,
-    borderColor: '#22292f',
+    borderColor: color.Primary,
   },
   titletextparent: {
     marginHorizontal: 30,
-    marginTop: -100,
+    marginTop: -130,
   },
-  title: {fontSize: 36, fontWeight: '700', color: 'black'},
-  subtitle: {color: 'black'},
+  title: {fontSize: 36, color: color.Primary, fontFamily: fonts.bold},
+  subtitle: {marginTop: 5, fontFamily: fonts.light},
   btnText: {
     fontSize: 17,
     lineHeight: 21,
     fontWeight: '700',
     letterSpacing: 0.25,
-    color: 'black',
   },
 });

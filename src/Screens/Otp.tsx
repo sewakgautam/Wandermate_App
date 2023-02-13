@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Pressable,
   Text,
@@ -8,105 +8,91 @@ import {
   Image,
   ImageBackground,
 } from 'react-native';
+import OtpInputs from 'react-native-otp-inputs';
+import {ActivityIndicator} from 'react-native-paper';
 
-import {Route} from '../config/constraint';
+import {color, Route} from '../config/constraint';
+import {fetchBackend} from '../config/FetchData';
 
-export default function Otp({navigation}) {
+export default function Otp({navigation, route}) {
+  const [otps, setOtp] = useState<{email: string; OTP: string}>({});
+  useEffect(() => {
+    setOtp({...otps, email: route.params.email});
+  }, []);
+  // console.log(otps);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    const verifyOtp = await fetchBackend('patch', '/auth/otpverify', otps);
+    if (verifyOtp) {
+      setLoading(false);
+      navigation.navigate(Route.ButtonNavigator, route.params);
+    }
+    setLoading(false);
+  };
   return (
-    <ImageBackground
-      source={{
-        uri: 'https://images.unsplash.com/photo-1492584328860-c0c7bb599679?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-      }}
-      imageStyle={{opacity: 0.6, backgroundColor: 'white'}}
+    <View
       style={[
         {
           flex: 1,
           position: 'relative',
+          backgroundColor: color.Background,
         },
       ]}>
       <View>
         <View style={{marginTop: 80, marginHorizontal: 25}}>
           <View style={{alignItems: 'center', alignContent: 'center'}}>
-            <Text style={styles.title}>OTP Verification</Text>
-            <Text style={styles.subtitle}>
-              We Will send you a one time password on this Email Address
+            <Image
+              source={{
+                uri: 'https://cdni.iconscout.com/illustration/premium/thumb/otp-authentication-security-5053897-4206545.png',
+              }}
+              style={{height: 200, width: 200}}
+            />
+            <Text style={styles.title}> Enter Your Verification Code</Text>
+            <Text style={styles.subtitle}>We Send a Verification Code to</Text>
+            <Text
+              style={{color: color.Primary, fontWeight: 'bold', fontSize: 20}}>
+              {route.params.email}
             </Text>
-            <Text style={styles.subtitle}>sewak.gautam58@gmail.com</Text>
           </View>
           <View
             style={{
               marginTop: 20,
+              marginHorizontal: 40,
               flexDirection: 'row',
-              justifyContent: 'space-around',
             }}>
-            <TextInput
-              keyboardType="number-pad"
-              textAlign="center"
-              cursorColor="white"
-              style={[
+            <OtpInputs
+              autofillFromClipboard={false}
+              handleChange={code => setOtp({...otps, OTP: code})}
+              numberOfInputs={4}
+              inputStyles={[
                 {
-                  borderRadius: 100,
-                  marginTop: 10,
+                  borderRadius: 10,
+                  textAlign: 'center',
                   fontSize: 20,
+                  fontWeight: 'bold',
                   height: 50,
                   width: 50,
-                  backgroundColor: 'white',
-                  color: 'black',
-                },
-              ]}
-            />
-            <TextInput
-              keyboardType="number-pad"
-              textAlign="center"
-              cursorColor="white"
-              style={[
-                {
-                  borderRadius: 100,
-                  marginTop: 10,
-                  fontSize: 20,
-                  height: 50,
-                  width: 50,
-                  backgroundColor: 'white',
-                  color: 'black',
-                },
-              ]}
-            />
-            <TextInput
-              keyboardType="number-pad"
-              textAlign="center"
-              cursorColor="white"
-              style={[
-                {
-                  borderRadius: 100,
-                  marginTop: 10,
-                  fontSize: 20,
-                  height: 50,
-                  width: 50,
-                  backgroundColor: 'white',
-                  color: 'black',
-                },
-              ]}
-            />
-            <TextInput
-              keyboardType="number-pad"
-              textAlign="center"
-              cursorColor="white"
-              style={[
-                {
-                  borderRadius: 100,
-                  marginTop: 10,
-                  fontSize: 20,
-                  height: 50,
-                  width: 50,
-                  backgroundColor: 'white',
+                  backgroundColor: '#e6fced',
                   color: 'black',
                 },
               ]}
             />
           </View>
-          <Pressable style={styles.oauthbtn}>
+          <Pressable
+            onPress={() => {
+              handleSubmit();
+            }}
+            style={styles.oauthbtn}>
             <View>
-              <Text style={styles.btnText}>Submit</Text>
+              <Text style={styles.btnText}>
+                {loading ? (
+                  <ActivityIndicator animating={true} color={'white'} />
+                ) : (
+                  'Verify'
+                )}
+              </Text>
             </View>
           </Pressable>
         </View>
@@ -117,7 +103,7 @@ export default function Otp({navigation}) {
           style={styles.footer}
         />
       </View>
-    </ImageBackground>
+    </View>
   );
 }
 
@@ -129,16 +115,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 10,
-    borderWidth: 1,
-    backgroundColor: '#183E71',
-    borderColor: '#183E71',
+    backgroundColor: color.Primary,
   },
   titletextparent: {
     marginHorizontal: 24,
     marginTop: -100,
   },
-  title: {fontSize: 30, fontWeight: '700', color: 'black'},
-  subtitle: {color: 'black', fontSize: 17},
+  title: {fontSize: 30, fontWeight: '700', color: color.Primary},
+  subtitle: {color: '#F7F6F9', fontSize: 17},
   btnText: {
     fontSize: 15,
     lineHeight: 21,

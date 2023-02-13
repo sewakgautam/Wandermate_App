@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Pressable,
   Text,
@@ -8,23 +8,46 @@ import {
   Image,
   ImageBackground,
   useWindowDimensions,
-  Alert,
 } from 'react-native';
-import {Route} from '../config/constraint';
+import {color, Route} from '../config/constraint';
+import {fetchBackend} from '../config/FetchData';
 
-export default function SignupBasicInformation({navigation}) {
+export default function SignupBasicInformation({navigation, route}) {
+  const [userInfo, setUserInfo] = useState<{
+    email: string;
+    password: string;
+    name: string;
+    country: string;
+    number: string;
+  }>({});
+
+  useEffect(() => {
+    setUserInfo({
+      ...userInfo,
+      email: route.params.email,
+      password: route.params.password,
+    });
+  }, []);
+
+  console.log(userInfo);
   const windowHeight = useWindowDimensions().height;
 
+  const handleSignup = async () => {
+    const signUpdata = await fetchBackend('post', '/auth/register', userInfo);
+
+    if (signUpdata && signUpdata?.email) {
+      navigation.navigate(Route.OTP, signUpdata);
+    }
+    console.log('this is from signup data', signUpdata);
+  };
+
   return (
-    <ImageBackground
-      source={{
-        uri: 'https://images.unsplash.com/photo-1550850603-645ae3c6c387?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
-      }}
-      imageStyle={{opacity: 0.6}}
+    <View
       style={[
         {
           flex: 1,
           position: 'relative',
+          backgroundColor: color.Background,
         },
         {minHeight: Math.round(windowHeight)},
       ]}>
@@ -37,7 +60,8 @@ export default function SignupBasicInformation({navigation}) {
             </Text>
           </View>
           <View style={{marginTop: 20}}>
-            <Text style={{fontSize: 18, color: '#183E71', fontWeight: '500'}}>
+            <Text
+              style={{fontSize: 18, color: color.Primary, fontWeight: '500'}}>
               Full Name
             </Text>
             <TextInput
@@ -47,15 +71,19 @@ export default function SignupBasicInformation({navigation}) {
                   marginTop: 10,
                   backgroundColor: 'white',
                   paddingHorizontal: 10,
+                  color: 'black',
+
                   paddingVertical: 8,
                 },
-                {},
               ]}
-              placeholder="Please Enter Your Email Address"
+              placeholderTextColor={'gray'}
+              placeholder="Please Enter Full Name"
+              onChangeText={t => setUserInfo({...userInfo, name: t})}
             />
           </View>
           <View style={{marginTop: 15}}>
-            <Text style={{fontSize: 18, color: '#183E71', fontWeight: '500'}}>
+            <Text
+              style={{fontSize: 18, color: color.Primary, fontWeight: '500'}}>
               Nationality
             </Text>
             <View style={{flexDirection: 'row'}}>
@@ -66,16 +94,20 @@ export default function SignupBasicInformation({navigation}) {
                   marginTop: 10,
                   paddingVertical: 8,
                   paddingHorizontal: 10,
+                  color: 'black',
+
                   width: '100%',
                 }}
-                placeholder="Please Enter Your Password"
-                autoCapitalize="none"
-                autoCorrect={false}
+                placeholderTextColor={'gray'}
+                placeholder="Please Enter Your Native Country"
+                onChangeText={t => setUserInfo({...userInfo, country: t})}
               />
             </View>
           </View>
           <View style={{marginTop: 15}}>
-            <Text style={{fontSize: 18, color: '#183E71', fontWeight: '500'}}>
+            <Text
+              onPress={() => navigation.navigate(Route.OTP, {})}
+              style={{fontSize: 18, color: color.Primary, fontWeight: '500'}}>
               Contact Number
             </Text>
             <View style={{flexDirection: 'row'}}>
@@ -84,12 +116,16 @@ export default function SignupBasicInformation({navigation}) {
                   backgroundColor: 'white',
                   borderRadius: 8,
                   marginTop: 10,
+                  color: 'black',
+
                   paddingVertical: 8,
                   paddingHorizontal: 10,
                   width: '100%',
                 }}
                 placeholder="Please Enter your Contact Number"
+                placeholderTextColor={'gray'}
                 keyboardType="phone-pad"
+                onChangeText={t => setUserInfo({...userInfo, number: t})}
               />
             </View>
           </View>
@@ -99,19 +135,22 @@ export default function SignupBasicInformation({navigation}) {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-            }}></View>
+            }}
+          />
 
           <Pressable
             style={styles.oauthbtn}
             onPress={() => {
-              navigation.navigate(Route.OTP);
+              handleSignup();
+
+              // navigation.navigate(Route.OTP);
             }}>
             <View
               style={{
                 display: 'flex',
                 flexDirection: 'row',
               }}>
-              <Text style={styles.btnText}>Next</Text>
+              <Text style={styles.btnText}>Sign Up</Text>
             </View>
           </Pressable>
         </View>
@@ -122,7 +161,7 @@ export default function SignupBasicInformation({navigation}) {
           style={styles.footer}
         />
       </View>
-    </ImageBackground>
+    </View>
   );
 }
 
@@ -134,15 +173,13 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 10,
-    borderWidth: 1,
-    backgroundColor: '#183E71',
-    borderColor: '#C6C6C6',
+    backgroundColor: color.Primary,
   },
   titletextparent: {
     marginHorizontal: 24,
     marginTop: -100,
   },
-  title: {fontSize: 30, fontWeight: '700'},
+  title: {fontSize: 30, color: color.Primary, fontWeight: '700'},
   subtitle: {color: '#AA9EA1', fontSize: 17},
   btnText: {
     fontSize: 15,

@@ -1,5 +1,6 @@
 package com.wandermate_app;
-
+// for web view
+import com.reactnativecommunity.webview.RNCWebViewPackage;
 import android.app.Application;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
@@ -25,6 +26,8 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
+          // i dunno why but commenting this line works
+          // packages.add(new RNCWebViewPackage());
           return packages;
         }
 

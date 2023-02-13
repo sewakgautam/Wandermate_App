@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import axios from 'axios';
+import React, {useEffect, useState} from 'react';
 import {
   Pressable,
   Text,
@@ -10,15 +11,60 @@ import {
   useWindowDimensions,
   Alert,
   TouchableOpacity,
+  Vibration,
+  ToastAndroid,
 } from 'react-native';
+import {ActivityIndicator} from 'react-native-paper';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {Route} from '../config/constraint';
+import {BACKEND_API, color, Route} from '../config/constraint';
+import {fetchBackend} from '../config/FetchData';
 
-export default function Signup({navigation}) {
+export default function Signup({navigation}: {navigation: any}) {
   const windowHeight = useWindowDimensions().height;
-  const [credential, setCredential] = useState({});
+  const [credential, setCredential] = useState<{
+    email: string;
+    password: string;
+    name: string;
+  }>({email: '', name: '', password: ''});
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [rightIcon, setRightIcon] = useState('eye');
+  const [loading, setLoading] = useState(false);
+
+  const showToastWithGravity = Message => {
+    Vibration.vibrate(40);
+    ToastAndroid.showWithGravityAndOffset(
+      `${Message}`,
+      ToastAndroid.SHORT,
+      ToastAndroid.TOP,
+      10,
+      100,
+    );
+  };
+
+  const handleSignup = async () => {
+    if (
+      credential.name == '' ||
+      credential.password == '' ||
+      credential.password == ''
+    ) {
+      showToastWithGravity('Please Input All Required Fields');
+    } else {
+      setLoading(true);
+      const signUpdata = await fetchBackend(
+        'post',
+        '/auth/register',
+        credential,
+      );
+
+      if (signUpdata && signUpdata?.email) {
+        setLoading(false);
+        navigation.navigate(Route.OTP, signUpdata);
+      }
+      showToastWithGravity(signUpdata.message);
+      console.log('this is from signup data', signUpdata);
+      setLoading(false);
+    }
+  };
 
   const handlePasswordVisibility = () => {
     if (rightIcon === 'eye') {
@@ -29,17 +75,13 @@ export default function Signup({navigation}) {
       setPasswordVisibility(!passwordVisibility);
     }
   };
-
   return (
-    <ImageBackground
-      source={{
-        uri: 'https://images.unsplash.com/photo-1533130061792-64b345e4a833?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-      }}
-      imageStyle={{opacity: 0.4}}
+    <View
       style={[
         {
           flex: 1,
           position: 'relative',
+          backgroundColor: color.Background,
         },
         {minHeight: Math.round(windowHeight)},
       ]}>
@@ -52,8 +94,9 @@ export default function Signup({navigation}) {
             </Text>
           </View>
           <View style={{marginTop: 20}}>
-            <Text style={{fontSize: 18, color: '#183E71', fontWeight: '500'}}>
-              Email Address
+            <Text
+              style={{fontSize: 18, color: color.Primary, fontWeight: '500'}}>
+              Name
             </Text>
             <TextInput
               style={[
@@ -62,23 +105,52 @@ export default function Signup({navigation}) {
                   marginTop: 10,
                   backgroundColor: 'white',
                   paddingHorizontal: 10,
+                  color: 'black',
+
                   paddingVertical: 8,
                 },
-                {},
               ]}
+              placeholderTextColor={'gray'}
+              placeholder="Please Enter Full Name"
+              onChangeText={t => setCredential({...credential, name: t})}
+            />
+          </View>
+          <View style={{marginTop: 20}}>
+            <Text
+              style={{fontSize: 18, color: color.Primary, fontWeight: '500'}}>
+              Email Address
+            </Text>
+            <TextInput
+              placeholderTextColor={'gray'}
+              style={[
+                {
+                  borderRadius: 8,
+                  marginTop: 10,
+                  backgroundColor: 'white',
+                  paddingHorizontal: 10,
+                  color: 'black',
+                  paddingVertical: 8,
+                },
+              ]}
+              onChangeText={t => {
+                setCredential({...credential, email: t});
+              }}
               placeholder="Please Enter Your Email Address"
             />
           </View>
           <View style={{marginTop: 15}}>
-            <Text style={{fontSize: 18, color: '#183E71', fontWeight: '500'}}>
+            <Text
+              style={{fontSize: 18, color: color.Primary, fontWeight: '500'}}>
               Password
             </Text>
             <View style={{flexDirection: 'row'}}>
               <TextInput
+                placeholderTextColor={'gray'}
                 secureTextEntry={passwordVisibility}
                 style={{
                   backgroundColor: 'white',
                   borderRadius: 8,
+                  color: 'black',
                   marginTop: 10,
                   paddingVertical: 8,
                   paddingHorizontal: 10,
@@ -86,32 +158,7 @@ export default function Signup({navigation}) {
                 }}
                 placeholder="Please Enter Your Password"
                 autoCapitalize="none"
-                autoCorrect={false}
-              />
-              <TouchableOpacity
-                onPress={handlePasswordVisibility}
-                style={{marginLeft: -40, marginTop: 22}}>
-                <Entypo name={rightIcon} size={20} color={'black'} />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={{marginTop: 15}}>
-            <Text style={{fontSize: 18, color: '#183E71', fontWeight: '500'}}>
-              Confirm Password
-            </Text>
-            <View style={{flexDirection: 'row'}}>
-              <TextInput
-                secureTextEntry={passwordVisibility}
-                style={{
-                  backgroundColor: 'white',
-                  borderRadius: 8,
-                  marginTop: 10,
-                  paddingVertical: 8,
-                  paddingHorizontal: 10,
-                  width: '100%',
-                }}
-                placeholder="Please Confirm Your Password"
-                autoCapitalize="none"
+                onChangeText={t => setCredential({...credential, password: t})}
                 autoCorrect={false}
               />
               <TouchableOpacity
@@ -132,26 +179,33 @@ export default function Signup({navigation}) {
           <Pressable
             style={styles.oauthbtn}
             onPress={() => {
-              navigation.navigate(Route.SignupInformation);
+              handleSignup();
             }}>
             <View
               style={{
                 display: 'flex',
                 flexDirection: 'row',
               }}>
-              <Text style={styles.btnText}>Next</Text>
+              <Text style={styles.btnText}>
+                {' '}
+                {loading ? (
+                  <ActivityIndicator animating={true} color={'white'} />
+                ) : (
+                  'Sign Up'
+                )}
+              </Text>
             </View>
           </Pressable>
         </View>
       </View>
       <View style={{flex: 1, justifyContent: 'flex-end'}}>
         <Text style={{alignSelf: 'center', fontWeight: '400'}}>
-          Already Have an Account ?
+          Already Have an Account ? {` `}
           <Text
             onPress={() => {
-              Alert.alert('Hello');
+              navigation.goBack();
             }}
-            style={{color: '#183E71', fontWeight: 'bold'}}>
+            style={{color: color.Primary, fontWeight: 'bold'}}>
             SignIn
           </Text>
         </Text>
@@ -160,7 +214,7 @@ export default function Signup({navigation}) {
           style={styles.footer}
         />
       </View>
-    </ImageBackground>
+    </View>
   );
 }
 
@@ -172,16 +226,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 10,
-    borderWidth: 1,
-    backgroundColor: '#183E71',
-    borderColor: '#C6C6C6',
+    backgroundColor: color.Primary,
   },
   titletextparent: {
     marginHorizontal: 24,
     marginTop: -100,
   },
-  title: {fontSize: 30, fontWeight: '700'},
-  subtitle: {color: '#999EA1', fontSize: 17},
+  title: {fontSize: 30, color: 'white', fontWeight: '700'},
+  subtitle: {color: 'gray', fontSize: 17},
   btnText: {
     fontSize: 15,
     lineHeight: 21,
@@ -193,9 +245,6 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     height: 90,
     width: '100%',
-  },
-  paragraph: {
-    fontSize: 15,
   },
   forgotpasstext: {
     color: 'red',

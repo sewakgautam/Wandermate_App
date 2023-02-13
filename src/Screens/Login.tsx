@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {
   Pressable,
   Text,
-  TextInput,
+  // TextInput,
   View,
   StyleSheet,
   Image,
@@ -10,11 +10,17 @@ import {
   useWindowDimensions,
   Alert,
   TouchableOpacity,
+  TextInput,
+  ToastAndroid,
 } from 'react-native';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import axios from 'axios';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {Route} from '../config/constraint';
+import {BACKEND_API, color, fonts, Route} from '../config/constraint';
+import {fetchBackend} from '../config/FetchData';
+import {ActivityIndicator, MD2Colors, Snackbar} from 'react-native-paper';
+import {Vibration} from 'react-native';
+// import {TextInput} from 'react-native-paper';
 
 export default function Login({navigation}) {
   const windowHeight = useWindowDimensions().height;
@@ -24,24 +30,45 @@ export default function Login({navigation}) {
   }>({email: '', password: ''});
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [rightIcon, setRightIcon] = useState('eye');
+  const [loading, setLoading] = useState(false);
+  const [creadentialError, setCredentialError] = useState(false);
+  const [error, setError] = useState(false);
+  const onDismissSnackBar = () => setCredentialError(false);
+
   console.log(credential);
 
-  const handleLogin = () => {
-    const data = credential;
-    axios({
-      method: 'POST',
-      url: `http://10.0.0.25:3000/auth/login`,
-      data,
-    })
-      .then(res => {
-        console.log(res.data);
-        if (res.data?.jwt) {
-          navigation.navigate(Route.Home);
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
+  const handleLogin = async () => {
+    if (credential.email == '' || credential.password == '') {
+      setError(true);
+      showToastWithGravity('Please Enter all Required Fields');
+    } else {
+      setLoading(true);
+      const backResponse = await fetchBackend(
+        'post',
+        '/auth/login',
+        credential,
+      );
+      console.log(backResponse);
+      setLoading(false);
+      if (backResponse) {
+        setCredential({});
+        navigation.navigate(Route.ButtonNavigator);
+      } else {
+        showToastWithGravity('Credential Not Matched');
+        setCredentialError(true);
+      }
+    }
+  };
+
+  const showToastWithGravity = Message => {
+    Vibration.vibrate(40);
+    ToastAndroid.showWithGravityAndOffset(
+      `${Message}`,
+      ToastAndroid.SHORT,
+      ToastAndroid.TOP,
+      10,
+      100,
+    );
   };
 
   const handlePasswordVisibility = () => {
@@ -55,18 +82,7 @@ export default function Login({navigation}) {
   };
 
   return (
-    <ImageBackground
-      source={{
-        uri: 'https://images.unsplash.com/photo-1492584328860-c0c7bb599679?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
-      }}
-      imageStyle={{opacity: 0.6, backgroundColor: 'white'}}
-      style={[
-        {
-          flex: 1,
-          position: 'relative',
-        },
-        {minHeight: Math.round(windowHeight)},
-      ]}>
+    <View style={{backgroundColor: '#191C24', flex: 1}}>
       <View>
         <View style={{marginTop: 80, marginHorizontal: 25}}>
           <View>
@@ -76,7 +92,7 @@ export default function Login({navigation}) {
             </Text>
           </View>
           <View style={{marginTop: 20}}>
-            <Text style={{fontSize: 18, color: '#183E80', fontWeight: '500'}}>
+            <Text style={{fontSize: 18, color: '#229A7F', fontWeight: '500'}}>
               Email
             </Text>
             <TextInput
@@ -86,32 +102,41 @@ export default function Login({navigation}) {
                   marginTop: 10,
                   backgroundColor: 'white',
                   paddingHorizontal: 10,
-                  paddingVertical: 8,
+
                   color: 'black',
                 },
+                error
+                  ? {borderBottomColor: 'red', borderBottomWidth: 1}
+                  : undefined,
               ]}
+              placeholderTextColor={'gray'}
               value={credential?.email}
               onChangeText={text => setCredential({...credential, email: text})}
               placeholder="Please Enter Your Email Address"
             />
           </View>
           <View style={{marginTop: 15}}>
-            <Text style={{fontSize: 18, color: '#183E71', fontWeight: '500'}}>
+            <Text style={{fontSize: 18, color: '#229A7F', fontWeight: '500'}}>
               Password
             </Text>
             <View style={{flexDirection: 'row'}}>
               <TextInput
                 secureTextEntry={passwordVisibility}
-                style={{
-                  backgroundColor: 'white',
-                  borderRadius: 8,
-                  marginTop: 10,
-                  paddingVertical: 8,
-                  paddingHorizontal: 10,
-                  width: '100%',
-                  color: 'black',
-                }}
-                placeholder="Please Enter Your Password"
+                style={[
+                  {
+                    backgroundColor: 'white',
+                    borderRadius: 8,
+                    marginTop: 10,
+                    paddingHorizontal: 10,
+                    width: '100%',
+                    color: 'black',
+                  },
+                  error
+                    ? {borderBottomColor: 'red', borderBottomWidth: 1}
+                    : undefined,
+                ]}
+                placeholder="Please Enter Your password"
+                placeholderTextColor={'gray'}
                 autoCapitalize="none"
                 value={credential?.password}
                 onChangeText={text =>
@@ -141,18 +166,17 @@ export default function Login({navigation}) {
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <BouncyCheckbox
                 size={20}
-                fillColor="#183E71"
+                fillColor="#229A7F"
                 text="Remember Me"
                 iconStyle={{borderColor: 'red'}}
                 innerIconStyle={{borderWidth: 2}}
                 textStyle={{color: 'white', textDecorationLine: 'none'}}
-                // onPress={(isChecked: boolean) => {}}
               />
             </View>
 
             <Text
               onPress={() => {
-                navigation.navigate(Route.Home);
+                navigation.navigate(Route.ButtonNavigator);
               }}
               style={styles.forgotpasstext}>
               Forgot Password ?
@@ -161,28 +185,44 @@ export default function Login({navigation}) {
 
           <Pressable style={styles.oauthbtn} onPress={() => handleLogin()}>
             <View>
-              <Text style={styles.btnText}>Login</Text>
+              <Text style={styles.btnText}>
+                {loading ? (
+                  <ActivityIndicator animating={true} color={'white'} />
+                ) : (
+                  'login'
+                )}
+              </Text>
             </View>
           </Pressable>
         </View>
       </View>
-      <View style={{flex: 1, justifyContent: 'flex-end'}}>
-        <Text style={{alignSelf: 'center', fontWeight: '400'}}>
+      <View style={{marginTop: 30}}>
+        <Text
+          style={{
+            alignSelf: 'center',
+            fontWeight: '400',
+          }}>
           Don't Have an Account ?{' '}
           <Text
             onPress={() => {
               navigation.navigate(Route.Signup);
             }}
-            style={{color: '#183E71', fontWeight: 'bold'}}>
-            SignIn
+            style={{
+              color: color.Primary,
+              fontWeight: 'bold',
+            }}>
+            Sign Up
           </Text>
         </Text>
+      </View>
+
+      <View style={{flex: 1, justifyContent: 'flex-end'}}>
         <Image
           source={require('../../assets/img/DesignAsset/footer.png')}
           style={styles.footer}
         />
       </View>
-    </ImageBackground>
+    </View>
   );
 }
 
@@ -194,15 +234,13 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 10,
-    borderWidth: 1,
-    backgroundColor: '#183E71',
-    borderColor: '#183E71',
+    backgroundColor: color.Primary,
   },
   titletextparent: {
     marginHorizontal: 24,
     marginTop: -100,
   },
-  title: {fontSize: 30, fontWeight: '700', color: 'black'},
+  title: {fontSize: 30, fontFamily: fonts.bold, color: 'white'},
   subtitle: {color: 'gray', fontSize: 17},
   btnText: {
     fontSize: 15,
@@ -223,6 +261,6 @@ const styles = StyleSheet.create({
     margin: 8,
   },
   forgotpasstext: {
-    color: 'black',
+    color: color.Secondary,
   },
 });

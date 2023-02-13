@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route} from '../config/constraint';
+import {color, Route} from '../config/constraint';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -17,9 +17,9 @@ export default function ButtonNavigator() {
     // <>
     <Tab.Navigator
       initialRouteName={Route.Login}
-      activeColor="#183E71"
+      activeColor={color.Primary}
       inactiveColor="#A1B1C5"
-      barStyle={{backgroundColor: '#ffff'}}>
+      barStyle={{backgroundColor: color.Tabs}}>
       <Tab.Screen
         listeners={() => ({
           tabPress: () => {
@@ -80,7 +80,7 @@ export default function ButtonNavigator() {
                 height: 60,
                 width: 60,
                 borderRadius: 10,
-                backgroundColor: '#183E71',
+                backgroundColor: color.Primary,
                 padding: 10,
                 color: 'white',
                 margin: -10,
@@ -124,7 +124,7 @@ export default function ButtonNavigator() {
           tabBarIcon: ({focused, color}) =>
             focused ? (
               <MaterialCommunityIcons name="account" color={color} size={24} />
-          ) : (
+            ) : (
               <MaterialCommunityIcons
                 name="account-outline"
                 color={color}

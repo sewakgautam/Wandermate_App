@@ -6,41 +6,47 @@ import {
   Text,
   View,
   Pressable,
-  Touchable,
   TouchableOpacity,
 } from 'react-native';
-import {Route} from '../config/constraint';
+import {color, fonts, Route} from '../config/constraint';
 
 export default function Onboard({navigation}) {
   return (
-    <ImageBackground
-      source={{
-        uri: 'https://images.unsplash.com/photo-1537905569824-f89f14cceb68?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=702&q=80',
-      }}
-      style={{flex: 1}}>
-      <Image
-        source={require('../../assets/img/logo/Main_logo_white.png')}
-        style={styles.logo}
-      />
-      <View style={{marginTop: -120}}>
+    <View style={{flex: 1, backgroundColor: color.Background}}>
+      <View style={{marginTop: 10, alignItems: 'center'}}>
+        <Image
+          source={{
+            uri: 'https://images.pexels.com/photos/8888137/pexels-photo-8888137.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+          }}
+          style={{
+            height: 500,
+            width: 370,
+            marginBottom: 20,
+            borderBottomLeftRadius: 20,
+            borderBottomRightRadius: 20,
+          }}
+        />
         <Text
           style={{
-            fontWeight: '800',
             fontSize: 25,
-            color: 'white',
             letterSpacing: 10,
             textAlign: 'center',
+            fontFamily: fonts.bold,
+            color: color.Primary,
           }}>
           Hey, Mate
         </Text>
-        <Text style={styles.titletext}>Let's Enjoy Your Dream Vacation</Text>
+        <Text style={styles.titletext}>
+          Let's Enjoy Your Dream Vacation On Nepal !
+        </Text>
+
         <View style={{marginTop: 30}}>
           <Pressable
             style={{
-              backgroundColor: 'white',
-              marginHorizontal: 120,
-              borderRadius: 15,
-              paddingVertical: 10,
+              backgroundColor: color.Primary,
+              borderRadius: 10,
+              width: 300,
+              paddingVertical: 15,
             }}>
             <TouchableOpacity
               style={{
@@ -55,7 +61,7 @@ export default function Onboard({navigation}) {
           </Pressable>
         </View>
       </View>
-    </ImageBackground>
+    </View>
   );
 }
 
@@ -63,16 +69,17 @@ const styles = StyleSheet.create({
   logo: {
     width: 180,
     marginLeft: 110,
-    marginTop: -220,
+    // marginTop: -220,
     resizeMode: 'contain',
   },
   titletext: {
-    fontWeight: '300',
-    fontSize: 40,
-    marginTop: 12,
+    // fontWeight: '300',
+    fontSize: 35,
+    marginTop: 15,
     paddingHorizontal: 30,
     color: 'white',
     textAlign: 'center',
+    fontFamily: fonts.light,
   },
   button: {
     width: 300,
@@ -86,7 +93,7 @@ const styles = StyleSheet.create({
   },
   buttontext: {
     fontSize: 18,
-    color: 'black',
+    color: 'white',
     fontWeight: '700',
     alignSelf: 'center',
   },
