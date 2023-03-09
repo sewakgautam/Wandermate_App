@@ -74,6 +74,29 @@ export default function HomePage({navigation}) {
       });
   }, [geoLocation]);
 
+  useEffect(() => {
+    AsyncStorage.getItem('loginData')
+      .then(res => {
+        const Datas = JSON.parse(res);
+        setSessionData(Datas);
+      })
+      .catch(err => {
+        console.log(err);
+        console.log('User Not loggedin');
+        navigation.navgate(Route.Login);
+      });
+  }, []);
+  var {data: userData, isLoading} = useQuery(
+    'userInfo',
+    () => fetchUserInfo(sessionData?.jwt),
+    {
+      refetchOnWindowFocus: true,
+      staleTime: 0,
+      cacheTime: 0,
+      refetchInterval: 10000,
+    },
+  );
+  userData = userData?.data;
   return (
     <View style={{backgroundColor: 'black', flex: 1}}>
       <View>
