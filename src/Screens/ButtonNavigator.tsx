@@ -8,11 +8,35 @@ import Profile from './Profile';
 import Maps from './Maps';
 import Plans from './Plans';
 import Qrscan from './Qrscan';
-import {Vibration} from 'react-native';
+import {Alert, BackHandler, Vibration} from 'react-native';
 
 const Tab = createMaterialBottomTabNavigator();
 
-export default function ButtonNavigator() {
+export default function ButtonNavigator({navigation}) {
+  React.useEffect(
+    () =>
+      navigation.addListener('beforeRemove', e => {
+        // Prevent default behavior of leaving the screen
+        e.preventDefault();
+
+        // Prompt the user before leaving the screen
+        Alert.alert(
+          'Exit Wandermate?',
+          'Are You Sure You want to Exit wandermate?',
+          [
+            {text: 'No', style: 'cancel', onPress: () => {}},
+            {
+              text: 'Yes',
+              style: 'destructive',
+              // If the user confirmed, then we dispatch the action we blocked earlier
+              // This will continue the action that had triggered the removal of the screen
+              onPress: () => BackHandler.exitApp(),
+            },
+          ],
+        );
+      }),
+    [navigation],
+  );
   return (
     // <>
     <Tab.Navigator
