@@ -23,8 +23,10 @@ export const Route = {
   Currency: 'currencyconverter',
 } as const;
 
-// export const BACKEND_API = '192.168.40.192:3000'; // local
-export const BACKEND_API = 'http://54.210.58.226:3000/'; // aws
+export const BACKEND_API = 'http://10.0.0.25:3000'; // home local
+// export const BACKEND_API = 'http://192.168.45.57:3000'; // local
+// export const BACKEND_API = 'https://1fae-202-63-244-120.in.ngrok.io'; // ngrok
+// export const BACKEND_API = 'http://192.168.18.67:3000';
 
 export const color = {
   Primary: '#229A7F',
