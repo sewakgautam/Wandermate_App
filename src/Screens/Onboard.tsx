@@ -1,13 +1,6 @@
-import React, {PureComponent} from 'react';
-import {
-  ImageBackground,
-  StyleSheet,
-  Image,
-  Text,
-  View,
-  Pressable,
-  TouchableOpacity,
-} from 'react-native';
+import React from 'react';
+import {ImageBackground, StyleSheet, Image, Text, View} from 'react-native';
+import { TouchableRipple } from 'react-native-paper';
 import {color, fonts, Route} from '../config/constraint';
 
 export default function Onboard({navigation}) {
@@ -41,24 +34,24 @@ export default function Onboard({navigation}) {
         </Text>
 
         <View style={{marginTop: 30}}>
-          <Pressable
+          <TouchableRipple
             style={{
               backgroundColor: color.Primary,
               borderRadius: 10,
               width: 300,
               paddingVertical: 15,
+            }}
+            onPress={() => {
+              navigation.navigate(Route.oauthscrean);
             }}>
-            <TouchableOpacity
+            <View
               style={{
                 display: 'flex',
                 justifyContent: 'center',
-              }}
-              onPress={() => {
-                navigation.navigate(Route.oauthscrean);
               }}>
               <Text style={styles.buttontext}>Let's go</Text>
-            </TouchableOpacity>
-          </Pressable>
+            </View>
+          </TouchableRipple>
         </View>
       </View>
     </View>
