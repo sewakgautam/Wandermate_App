@@ -1,11 +1,13 @@
 import * as React from 'react';
-import {Image, Text, View} from 'react-native';
+import {Image, Pressable, Text, View} from 'react-native';
 import {color, fonts} from '../config/constraint';
 
-export function CategoryCard({categoryImage, categoryName}) {
+export function CategoryCard({categoryImage, categoryName, categoryId}) {
   return (
     <>
-      <View
+      <Pressable
+        onPress={() => console.log(categoryId)}
+        key={categoryId}
         style={{
           flexDirection: 'row',
           gap: 10,
@@ -25,7 +27,7 @@ export function CategoryCard({categoryImage, categoryName}) {
         <Text style={{fontFamily: fonts.medium, fontSize: 15}}>
           {categoryName}
         </Text>
-      </View>
+      </Pressable>
     </>
   );
 }

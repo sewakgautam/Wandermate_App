@@ -86,6 +86,18 @@ export default function HomePage({navigation}) {
         navigation.navgate(Route.Login);
       });
   }, []);
+
+  var {data: categories, isLoading: loadingCategories} = useQuery(
+    'allCategories',
+    () => fetchCategories(),
+    {
+      refetchOnWindowFocus: true,
+      staleTime: 0,
+      cacheTime: 0,
+      refetchInterval: 10000,
+    },
+  );
+  categories = categories?.data;
   var {data: userData, isLoading} = useQuery(
     'userInfo',
     () => fetchUserInfo(sessionData?.jwt),
@@ -97,194 +109,31 @@ export default function HomePage({navigation}) {
     },
   );
   userData = userData?.data;
+
+  const categoryList = categories?.map((category: any) => (
+    <CategoryCard
+      categoryName={category.title}
+      categoryImage={
+        category.icon
+          ? `${BACKEND_API}/${category.icon}`
+          : 'https://images.unsplash.com/photo-1620903376453-25f5a6fd533e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80'
+      }
+      categoryId={category.categoryId}
+    />
+  ));
   return (
     <View style={{backgroundColor: 'black', flex: 1}}>
-      <View>
-        <View
-          style={{
-            top: 15,
-            marginBottom: 20,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            paddingHorizontal: 10,
-            paddingTop: 10,
-          }}>
-          <View
-            style={{
-              // backgroundColor: 'hsla(0, 1%, 100%, 0.57)',
-              borderRadius: 10,
-              flexDirection: 'row',
-              gap: 10,
-              padding: 10,
-            }}>
-            <Image
-              source={{
-                uri: 'https://images.goodsmile.info/cgm/images/product/20200513/9505/69654/large/a3b56bccc98a8d4282224f40806415ff.jpg',
-              }}
-              style={{
-                resizeMode: 'contain',
-                height: 50,
-                width: 50,
-                borderRadius: 10,
-                borderColor: color.Primary,
-                borderWidth: 1,
-              }}
-            />
-            <View>
-              <Text
-                style={{
-                  color: 'white',
-                  fontSize: 14,
-                  fontFamily: fonts.light,
-                }}>
-                {Greetings}!
-              </Text>
-              <Text
-                style={{
-                  color: 'white',
-                  fontSize: 20,
-                  fontFamily: fonts.bold,
-                }}>
-                Sewak Gautam
-              </Text>
-            </View>
-          </View>
-          <Pressable
-            onPress={() => navigation.navigate(Route.Weather)}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 0.5,
-              height: 60,
-              paddingHorizontal: 10,
-              borderRadius: 10,
-              backgroundColor: color.Accent,
-            }}>
-            <View style={{flexDirection: 'row'}}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  color: 'white',
-                  lineHeight: 30,
-                  // fontWeight: 'bold',
-                  fontFamily: fonts.bold,
-                }}>
-                {(+weather.temp | 0) - 2}
-              </Text>
-              {/* decreasing the weather value by 2 beacaues while testing we got temperature more than 2 from the real temperature */}
-              <Text
-                style={{
-                  fontSize: 15,
-                  color: 'white',
-                  lineHeight: 20,
-                  fontFamily: fonts.medium,
-                }}>
-                o
-              </Text>
-              <Text
-                style={{
-                  fontSize: 18,
-                  color: 'white',
-                  lineHeight: 25,
-                  fontFamily: fonts.medium,
-                }}>
-                C
-              </Text>
-            </View>
-            <Image
-              source={{uri: `http:${weather.icon}`}}
-              style={{
-                height: 50,
-                width: 50,
-              }}
-            />
-          </Pressable>
-        </View>
-        <View style={{marginHorizontal: 20, marginVertical: 20}}>
-          <Text
-            style={{
-              // fontWeight: 'bold',
-              fontSize: 30,
-              color: 'white',
-              marginRight: 120,
-              fontFamily: fonts.bold,
-            }}>
-            Explore the Beauty of Nepal !
-          </Text>
-        </View>
-        <View>
-          <Searchbar
-            style={{
-              justifyContent: 'center',
-              marginHorizontal: 20,
-              borderRadius: 20,
-              backgroundColor: '#1C1C1C',
-            }}
-            selectionColor={color.Primary}
-            iconColor="gray"
-            inputStyle={{color: 'white'}}
-            placeholder="Where You are Going ?"
-            placeholderTextColor={'gray'}
-            elevation={2}
-            onChangeText={() => {
-              <BottomScroll />;
-            }}
-            value={searchQuery}
-          />
-        </View>
-      </View>
-      <ScrollView
-        style={{marginLeft: 25, marginTop: 20}}
-        showsVerticalScrollIndicator={false}>
-        <View>
-          <Text
-            style={{
-              fontSize: 25,
-              color: 'white',
-              fontFamily: fonts.medium,
-            }}>
-            Category
-          </Text>
-          <ScrollView
-            showsHorizontalScrollIndicator={false}
-            alwaysBounceHorizontal
-            horizontal
-            style={{marginVertical: 20}}>
-            <CategoryCard
-              categoryName={'Lakes'}
-              categoryImage={
-                'https://cdn-icons-png.flaticon.com/512/2151/2151296.png'
-              }
-            />
-            <CategoryCard
-              categoryName={'River'}
-              categoryImage={
-                'https://www.pngall.com/wp-content/uploads/9/City-River-PNG-Clipart.png'
-              }
-            />
-            <CategoryCard
-              categoryName={'Mountains'}
-              categoryImage={
-                'https://static.vecteezy.com/system/resources/previews/014/037/394/original/illustration-of-mountains-png.png'
-              }
-            />
-            <CategoryCard
-              categoryName={'Beach'}
-              categoryImage={
-                'https://static.vecteezy.com/system/resources/previews/010/794/497/original/beach-3d-illustration-png.png'
-              }
-            />
-          </ScrollView>
-        </View>
-        <View>
-          <Text
-            style={{
-              fontSize: 25,
-              color: 'white',
-              fontFamily: fonts.regular,
-            }}>
-            Popular Destinations
-          </Text>
+              <ScrollView
+                showsHorizontalScrollIndicator={false}
+                alwaysBounceHorizontal
+                horizontal
+                style={{marginVertical: 20}}>
+                {!categories?.length ? (
+                  <Text>No Categories Found ........... </Text>
+                ) : (
+                  categoryList
+                )}
+              </ScrollView>
 
           <ScrollView
             showsHorizontalScrollIndicator={false}
