@@ -17,7 +17,9 @@ import {color, fonts, Route} from '../config/constraint';
 import {fetchBackend} from '../config/FetchData';
 import {BottomScroll} from '../Components/BottomSheet';
 import {CategoryCard} from '../Components/CategoryCard';
-import {FestivalCard} from '../Components/FestivalsCard';
+import {useQuery} from 'react-query';
+import {fetchCategories, fetchHeritages, fetchUserInfo} from '../Utils/bridge';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const currentDate = new Date();
 const dayHour = currentDate.getHours();
@@ -87,6 +89,20 @@ export default function HomePage({navigation}) {
       });
   }, []);
 
+
+  //  ----------- Fetch from Backend  --------
+  var {data: heritageDatas, isLoading: loadingHeritage} = useQuery(
+    'allHeritages',
+    () => fetchHeritages(),
+    {
+      refetchOnWindowFocus: true,
+      staleTime: 0,
+      cacheTime: 0,
+      refetchInterval: 1000,
+    },
+  );
+  heritageDatas = heritageDatas?.data;
+
   var {data: categories, isLoading: loadingCategories} = useQuery(
     'allCategories',
     () => fetchCategories(),
@@ -109,6 +125,21 @@ export default function HomePage({navigation}) {
     },
   );
   userData = userData?.data;
+
+
+  const heritageList = heritageDatas?.map((heritage: any) => (
+    <HeritageCard
+      imageLink={
+        heritage.featureImage
+          ? `${BACKEND_API}/${heritage?.featureImage}`
+          : 'https://images.unsplash.com/photo-1620903376453-25f5a6fd533e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80'
+      }
+      placeName={heritage.title}
+      address={heritage.address}
+      farFromUser={heritage.totalTimeTaken}
+      heritageId={heritage.heritageId}
+    />
+  ));
 
   const categoryList = categories?.map((category: any) => (
     <CategoryCard
@@ -134,78 +165,30 @@ export default function HomePage({navigation}) {
                   categoryList
                 )}
               </ScrollView>
+            <View>
+              <Text
+                style={{
+                  fontSize: 25,
+                  color: 'white',
+                  fontFamily: fonts.regular,
+                }}>
+                Popular Destinations
+              </Text>
 
-          <ScrollView
-            showsHorizontalScrollIndicator={false}
-            horizontal
-            style={{height: 240}}>
-            <HeritageCard
-              imageLink={
-                'https://images.unsplash.com/photo-1620903376453-25f5a6fd533e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80'
-              }
-              planceName={'Kanyam'}
-              address={'Ilam'}
-              farFromUser={'2 Hour'}
-            />
-            <HeritageCard
-              imageLink={
-                'https://images.unsplash.com/photo-1620903376453-25f5a6fd533e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80'
-              }
-              planceName={'Kanyam'}
-              address={'Ilam'}
-              farFromUser={'200 Km away'}
-            />
-            <HeritageCard
-              imageLink={
-                'https://images.unsplash.com/photo-1620903376453-25f5a6fd533e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80'
-              }
-              planceName={'Kanyam'}
-              address={'Ilam'}
-              farFromUser={'200 Km away'}
-            />
-            <HeritageCard
-              imageLink={
-                'https://images.unsplash.com/photo-1620903376453-25f5a6fd533e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80'
-              }
-              planceName={'Kanyam'}
-              address={'Ilam'}
-              farFromUser={'200 Km away'}
-            />
-          </ScrollView>
-        </View>
-        <View style={{marginVertical: 20}}>
-          <Text
-            style={{
-              fontSize: 25,
-              color: 'white',
-              fontFamily: fonts.medium,
-            }}>
-            Upcoming Festivals
-          </Text>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={{marginVertical: 10}}>
-            <FestivalCard
-              festivalDescription={
-                'Dashain or Badadashain, also referred as Bijaya Dashami in Sanskrit, is a major Hindu religious festival in Nepal. It is also celebrated by Hindus of Nepal and elsewhere in the world ....'
-              }
-              festivalTitle={'Dashain'}
-              festivalImage={
-                'https://myrepublica.nagariknetwork.com/uploads/media/1506759324794_RS_KTM_20170930__MG_0473.JPG'
-              }
-            />
-            <FestivalCard
-              festivalDescription={
-                'Tihar (also known as Deepawali and Yamapanchak) is a five-day Hindu festival celebrated in Nepal and the Indian states of Sikkim and West Bengal, ....'
-              }
-              festivalTitle={'Tihar'}
-              festivalImage={
-                'https://data.tibettravel.org/assets/images/nepal/nepal-festival/nepal-light-festival.jpg'
-              }
-            />
-          </ScrollView>
-        </View>
-      </ScrollView>
+              <ScrollView
+                showsHorizontalScrollIndicator={false}
+                horizontal
+                style={{height: 240}}>
+                {!heritageDatas?.length ? (
+                  <NodataFound
+                    message="No Heritage Found"
+                    ImageUri="https://www.pngkey.com/png/full/370-3701115_find-near-me-airport-cartoon-png.png"
+                  />
+                ) : (
+                  heritageList
+                )}
+              </ScrollView>
+            </View>
     </View>
   );
 }
