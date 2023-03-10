@@ -14,7 +14,13 @@ import {ActivityIndicator} from 'react-native-paper';
 import {color, Route} from '../config/constraint';
 import {fetchBackend} from '../config/FetchData';
 
-export default function Otp({navigation, route}) {
+export default function Otp({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route: any;
+}) {
   const [otps, setOtp] = useState<{email: string; OTP: string}>({});
   useEffect(() => {
     setOtp({...otps, email: route.params.email});
