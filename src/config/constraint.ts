@@ -13,6 +13,7 @@ export const Route = {
   SignupInformation: 'signupinformationpage',
   OTP: 'otppage',
   Heritage: 'heritagepage',
+  Package: 'packagepage',
   Weather: 'weatherpage',
   Personalinfo: 'personalinfo',
   Aboutpage: 'aboutpage',
