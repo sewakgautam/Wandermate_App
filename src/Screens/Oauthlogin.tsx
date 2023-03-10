@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, StyleSheet, View, Image, Pressable, Alert} from 'react-native';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {color, fonts, Route} from '../config/constraint';
