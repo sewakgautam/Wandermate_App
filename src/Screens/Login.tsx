@@ -6,24 +6,21 @@ import {
   View,
   StyleSheet,
   Image,
-  ImageBackground,
   useWindowDimensions,
-  Alert,
   TouchableOpacity,
   TextInput,
   ToastAndroid,
 } from 'react-native';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
-import axios from 'axios';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {BACKEND_API, color, fonts, Route} from '../config/constraint';
+import {color, fonts, Route} from '../config/constraint';
 import {fetchBackend} from '../config/FetchData';
-import {ActivityIndicator, MD2Colors, Snackbar} from 'react-native-paper';
+import {ActivityIndicator} from 'react-native-paper';
 import {Vibration} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // import {TextInput} from 'react-native-paper';
 
-export default function Login({navigation}) {
-  const windowHeight = useWindowDimensions().height;
+export default function Login({navigation}: {navigation: sny}) {
   const [credential, setCredential] = useState<{
     email: string;
     password: string;
@@ -43,16 +40,17 @@ export default function Login({navigation}) {
       showToastWithGravity('Please Enter all Required Fields');
     } else {
       setLoading(true);
-      const backResponse = await fetchBackend(
-        'post',
-        '/auth/login',
-        credential,
-      );
-      console.log(backResponse);
+      var backResponse = await fetchBackend('post', '/auth/login', credential);
       setLoading(false);
       if (backResponse) {
-        setCredential({});
-        navigation.navigate(Route.ButtonNavigator);
+        try {
+          await AsyncStorage.setItem('loginData', JSON.stringify(backResponse));
+          setCredential({});
+          setCredentialError(true);
+          navigation.navigate(Route.ButtonNavigator);
+        } catch (e) {
+          console.log(e);
+        }
       } else {
         showToastWithGravity('Credential Not Matched');
         setCredentialError(true);
