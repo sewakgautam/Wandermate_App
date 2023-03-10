@@ -3,6 +3,7 @@ import {Text, StyleSheet, View, Image, Pressable, Alert} from 'react-native';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {color, fonts, Route} from '../config/constraint';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Oauthlogin({navigation}: {navigation: any}) {
   // const [userInfo, setUserInfo] = useState({any});
@@ -28,6 +29,18 @@ export default function Oauthlogin({navigation}: {navigation: any}) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    (async () => {
+      let value = await AsyncStorage.getItem('loginData');
+      value = JSON.parse(value);
+      if (value?.jwt) {
+        navigation.navigate(Route.ButtonNavigator);
+      } else {
+        console.log('User Not loggedin');
+      }
+    })();
+  });
   return (
     <View style={{backgroundColor: color.Background, flex: 1}}>
       <View>

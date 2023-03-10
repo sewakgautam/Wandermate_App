@@ -1,9 +1,43 @@
 import {Image, ScrollView, Text, View} from 'react-native';
 import * as React from 'react';
 import {List} from 'react-native-paper';
-import {color, Route} from '../config/constraint';
+import {BACKEND_API, color, Route} from '../config/constraint';
 import {SettingList} from '../Components/SettingList';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useQuery} from 'react-query';
+import {fetchUserInfo} from '../Utils/bridge';
+
 export default function Profile({navigation}) {
+  const [sessionData, setSessionData] = React.useState<{}>();
+
+  // ------------ fetching from local storage --------
+  React.useEffect(() => {
+    AsyncStorage.getItem('loginData')
+      .then(res => {
+        const Datas = JSON.parse(res);
+        setSessionData(Datas);
+      })
+      .catch(err => {
+        console.log(err);
+        console.log('User Not loggedin');
+        navigation.navgate(Route.Login);
+      });
+  }, []);
+
+  // ---------- End of fetching local storage -----------
+
+  var {data: userData, isLoading} = useQuery(
+    'userInfo',
+    () => fetchUserInfo(sessionData?.jwt),
+    {
+      refetchOnWindowFocus: true,
+      staleTime: 0,
+      cacheTime: 0,
+      refetchInterval: 10000,
+    },
+  );
+  userData = userData?.data;
+
   return (
     <View style={{backgroundColor: color.Background, flex: 1}}>
       <View style={{marginHorizontal: 20, top: 30}}>
@@ -26,11 +60,14 @@ export default function Profile({navigation}) {
             paddingLeft: 20,
           }}>
           <Image
-            source={require('../../assets/img/DesignAsset/sushila.jpeg')}
-            // source={{
-            //   uri: 'https://scontent.fbir2-1.fna.fbcdn.net/v/t39.30808-6/319294733_696361075389835_5454243774522418209_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=IjgLTtAUBrwAX-Nb1VA&_nc_ht=scontent.fbir2-1.fna&oh=00_AfAFpT3-b0VA96gBLWEjIqWPUZwPs3lD38AiTu8hW9veHw&oe=63E47DB7',
-            // }}
+            // source={require('../../assets/img/DesignAsset/sushila.jpeg')}
+            source={{
+              uri: userData
+                ? `${BACKEND_API}/${userData?.avatar}`
+                : 'https://images.goodsmile.info/cgm/images/product/20200513/9505/69654/large/a3b56bccc98a8d4282224f40806415ff.jpg',
+            }}
             style={{
+              resizeMode: 'contain',
               borderRadius: 50,
               height: 70,
               width: 70,
@@ -40,10 +77,10 @@ export default function Profile({navigation}) {
           />
           <View style={{flexDirection: 'column'}}>
             <Text style={{color: 'white', fontSize: 20, fontWeight: '900'}}>
-              Sushila Kafle
+              {userData?.name}
             </Text>
             <Text style={{fontSize: 15, fontWeight: '500'}}>
-              kafle.sushilla56@gmail.com
+              {userData?.email}
             </Text>
           </View>
         </View>
@@ -61,6 +98,7 @@ export default function Profile({navigation}) {
                 title={'Personal Info'}
                 subTitle={'make Changes to your account'}
                 navigateTo={Route.Personalinfo}
+                paramData={userData}
               />
               <SettingList
                 iconName={'currency-usd'}
