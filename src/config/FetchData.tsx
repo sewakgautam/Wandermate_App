@@ -2,7 +2,7 @@ import axios from 'axios';
 import {BACKEND_API} from './constraint';
 
 export function fetchBackend(method: string, url: string, data?: any) {
-  console.log(url);
+  console.log(`${BACKEND_API}${url}`);
   try {
     const datas = axios({
       method,
@@ -10,11 +10,11 @@ export function fetchBackend(method: string, url: string, data?: any) {
       data: data,
     })
       .then(res => {
-        console.log(res.data);
+        console.log(res);
         return res.data;
       })
       .catch(err => {
-        console.log(err.data);
+        console.log(err);
       });
     return datas;
   } catch (err) {
