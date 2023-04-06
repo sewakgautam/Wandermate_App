@@ -33,7 +33,7 @@ export default function Otp({
     const verifyOtp = await fetchBackend('patch', '/auth/otpverify', otps);
     if (verifyOtp) {
       setLoading(false);
-      navigation.navigate(Route.ButtonNavigator, route.params);
+      navigation.navigate(Route.Login);
     }
     setLoading(false);
   };

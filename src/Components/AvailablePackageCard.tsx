@@ -12,6 +12,7 @@ export function AvailablePackages({
   const navigation = useNavigation();
   return (
     <Pressable
+    
       onPress={() => {
         console.log(packageId);
         navigation.navigate(Route.Package, {packageId,packageTitle});

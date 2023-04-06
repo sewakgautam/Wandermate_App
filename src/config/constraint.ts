@@ -22,15 +22,25 @@ export const Route = {
   Termsandcondition: 'termsandcondition',
   PrivacyandPolicy: 'privacyandpolicy',
   Currency: 'currencyconverter',
+  Navigation: 'navigation',
+  Category: 'category',
+  Search: 'search',
+  MyPlan: 'myplan',
+  Waypoints: 'mywaypoints',
+  Festivals: 'festivaldetails',
+  Notes: 'mynotes',
+  EachNote: 'noteinfo',
 } as const;
 
-export const BACKEND_API = 'http://10.0.0.25:3000'; // home local
-// export const BACKEND_API = 'http://192.168.45.57:3000'; // local
-// export const BACKEND_API = 'https://1fae-202-63-244-120.in.ngrok.io'; // ngrok
-// export const BACKEND_API = 'http://192.168.18.67:3000';
+// export const BACKEND_API = 'http://10.0.0.25:3000'; // home local
+// export const BACKEND_API = 'http://192.168.198.75:3000'; // local
+// export const BACKEND_API = ' https://b860-202-63-244-120.in.ngrok.io'; // ngrok
+export const BACKEND_API = 'http://192.168.18.5:3000';
+// export const BACKEND_API = 'http://54.236.45.47:3000';
 
 export const color = {
   Primary: '#229A7F',
+  PrimaryFace: '#239f83',
   // Primary: '#31D8A0',
   Secondary: '#F5DEB3',
   Accent: '#041511',

@@ -7,22 +7,37 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {color} from '../config/constraint';
-
+import {color, Route} from '../config/constraint';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
+import CryptoJS from 'crypto-js';
 
-export default function Qrscan() {
+export default function Qrscan({navigation}) {
+  const myAppIdentifier = 'heritageCode:'; // add a unique identifier for your app
+  const secretKey = 'mysecretkey'; // replace with your secret key
+
   const scannedData = t => {
-    console.log(t.data);
-    Alert.alert(t.data);
+    const fields = t.split('!_:_!');
+    console.log(fields);
+    if (fields.length >= 2) {
+      if (fields[1].startsWith(myAppIdentifier)) {
+        const encryptedDefData = fields[1].slice(myAppIdentifier.length);
+        const bytes = CryptoJS.AES.decrypt(encryptedDefData, secretKey);
+        const decryptedDefData = bytes.toString(CryptoJS.enc.Utf8);
+        // setDefData(decryptedDefData);
+        console.log(decryptedDefData);
+        navigation.navigate(Route.Heritage, {heritageId: decryptedDefData});
+      } else {
+        Alert.alert('Qrcode Invalid');
+      }
+    }
   };
   return (
     <View style={{backgroundColor: color.Background, flex: 1}}>
       <QRCodeScanner
         markerStyle={{borderColor: color.Primary}}
         fadeIn={true}
-        onRead={t => scannedData(t)}
+        onRead={t => scannedData(t.data)}
         showMarker={true}
         reactivate={true}
       />

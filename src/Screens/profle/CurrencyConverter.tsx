@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {useEffect, useState} from 'react';
 import {ImageBackground, Text} from 'react-native';
+import WebView from 'react-native-webview';
 
 export function CurrencyConvert() {
   const [currency, setCurrency] = useState();
@@ -15,11 +16,12 @@ export function CurrencyConvert() {
   }, []);
   return (
     <>
-      <ImageBackground
-        style={{flex: 1}}
+      <WebView
+        scalesPageToFit={false}
         source={{
-          uri: 'https://img.freepik.com/premium-vector/forex-trading-background_23-2148583926.jpg?w=2000',
-        }}></ImageBackground>
+          html: '<iframe src="https://nepalicalendar.rat32.com/embed-forex.php" frameborder="30" scrolling="no" marginwidth="0" marginheight="0" style="border:none; overflow:hidden; width:100%; height:1200; border-radius:5px;padding:0px;margin:0px;" allowtransparency="true"></iframe>',
+        }}
+      />
     </>
   );
 }

@@ -10,7 +10,7 @@ import {
   ScrollView,
   View,
 } from 'react-native';
-import {Text} from 'react-native-paper';
+import {FAB, Text} from 'react-native-paper';
 import {Searchbar} from 'react-native-paper';
 import Geolocation from '@react-native-community/geolocation';
 import {HeritageCard} from '../Components/HeirtageHomePageCard';
@@ -18,9 +18,20 @@ import {BACKEND_API, color, fonts, Route} from '../config/constraint';
 import {BottomScroll} from '../Components/BottomSheet';
 import {CategoryCard} from '../Components/CategoryCard';
 import {useQuery} from 'react-query';
-import {fetchCategories, fetchHeritages, fetchUserInfo} from '../Utils/bridge';
+import {
+  fetchCategories,
+  fetchFestivals,
+  fetchHeritages,
+  fetchUserInfo,
+} from '../Utils/bridge';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NodataFound from '../Components/Nodatafound';
+import {StyleSheet} from 'react-native';
+import {Linking} from 'react-native';
+import {NativeModules} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+
+const {TelephonyManager} = NativeModules;
 
 const currentDate = new Date();
 const dayHour = currentDate.getHours();
@@ -44,7 +55,6 @@ export default function HomePage({navigation}) {
   const [sessionData, setSessionData] = useState<{}>();
 
   const [geoLocation, setGetLocation] = useState({});
-  const [searchQuery, setSearchQuery] = React.useState('');
 
   const weatherApikey = 'b5d32261c0dc4f88a71111045221406'; // api key of weatherApi
   useEffect(() => {
@@ -102,6 +112,19 @@ export default function HomePage({navigation}) {
   );
   heritageDatas = heritageDatas?.data;
 
+  var {data: festivalData, isLoading: loadingFestival} = useQuery(
+    'allFestivals',
+    () => fetchFestivals(),
+    {
+      refetchOnWindowFocus: true,
+      staleTime: 0,
+      cacheTime: 0,
+      refetchInterval: 1000,
+    },
+  );
+
+  festivalData = festivalData?.data;
+
   var {data: categories, isLoading: loadingCategories} = useQuery(
     'allCategories',
     () => fetchCategories(),
@@ -114,7 +137,7 @@ export default function HomePage({navigation}) {
   );
   categories = categories?.data;
 
-  var {data: userData, isLoading} = useQuery(
+  var {data: userInfo, isLoading} = useQuery(
     'userInfo',
     () => fetchUserInfo(sessionData?.jwt),
     {
@@ -124,7 +147,15 @@ export default function HomePage({navigation}) {
       refetchInterval: 1000,
     },
   );
-  userData = userData?.data;
+  var userData = userInfo?.data;
+  // console.log(userInfo?.status);
+
+  // console.log(userInfo?.status);
+  if (userInfo?.status === 404 || userInfo?.status === 401) {
+    AsyncStorage.removeItem('loginData');
+    // navigation.remove(Route.Home);
+    navigation.goBack(Route.Login);
+  }
 
   // if (userData) {
   //   console.log(userData);
@@ -146,7 +177,6 @@ export default function HomePage({navigation}) {
       heritageId={heritage.heritageId}
     />
   ));
-
   const categoryList = categories?.map((category: any) => (
     <CategoryCard
       categoryName={category.title}
@@ -158,6 +188,53 @@ export default function HomePage({navigation}) {
       categoryId={category.categoryId}
     />
   ));
+
+  const festivalList = festivalData?.map((festival: any) => {
+    return festival.status ? (
+      <Pressable
+        key={festival.festivalId}
+        onPress={() => {
+          navigation.navigate(Route.Festivals, {
+            festivalId: festival.festivalId,
+            festivalName: festival.festivalName,
+          });
+        }}
+        style={{
+          backgroundColor: color.Background,
+          display: 'flex',
+          flexDirection: 'row',
+          borderRadius: 10,
+          gap: 10,
+          marginBottom: 10,
+          marginRight: 20,
+        }}>
+        <Image
+          source={{
+            uri: `${BACKEND_API}/${festival.featureImage}`,
+          }}
+          style={{
+            height: 100,
+            width: 100,
+            borderTopLeftRadius: 10,
+            borderBottomLeftRadius: 10,
+          }}
+        />
+        <View style={{padding: 10}}>
+          <Text style={{fontFamily: fonts.bold, color: 'white'}}>
+            {festival.festivalName}
+          </Text>
+          <Text
+            style={{
+              fontFamily: fonts.light,
+              color: 'white',
+              width: 250,
+            }}>
+            {festival.description.substr(0, 200)}
+          </Text>
+        </View>
+      </Pressable>
+    ) : undefined;
+  });
 
   return (
     <View style={{backgroundColor: 'black', flex: 1}}>
@@ -177,7 +254,10 @@ export default function HomePage({navigation}) {
                 paddingHorizontal: 10,
                 paddingTop: 10,
               }}>
-              <View
+              <Pressable
+                onPress={() => {
+                  TelephonyManager.placeEmergencyCall(100);
+                }}
                 style={{
                   // backgroundColor: 'hsla(0, 1%, 100%, 0.57)',
                   borderRadius: 10,
@@ -218,7 +298,7 @@ export default function HomePage({navigation}) {
                     {userData?.name ? `${userData.name}` : 'Guest User'}
                   </Text>
                 </View>
-              </View>
+              </Pressable>
               <Pressable
                 onPress={() => navigation.navigate(Route.Weather)}
                 style={{
@@ -291,20 +371,21 @@ export default function HomePage({navigation}) {
                   backgroundColor: '#1C1C1C',
                 }}
                 selectionColor={color.Primary}
+                onPressIn={() => {
+                  navigation.navigate(Route.Search);
+                }}
                 iconColor="gray"
                 inputStyle={{color: 'white'}}
                 placeholder="Where You are Going ?"
                 placeholderTextColor={'gray'}
                 elevation={2}
-                onChangeText={() => {
-                  <BottomScroll />;
-                }}
-                value={searchQuery}
+                onChangeText={() => {}}
+                value={''}
               />
             </View>
           </View>
           <ScrollView
-            style={{marginLeft: 25, marginTop: 20}}
+            style={{marginLeft: 25, marginTop: 20, height: 450}}
             showsVerticalScrollIndicator={false}>
             <View>
               <Text
@@ -351,9 +432,39 @@ export default function HomePage({navigation}) {
                 )}
               </ScrollView>
             </View>
+            <View style={{marginTop: 20}}>
+              <Text
+                style={{
+                  fontSize: 25,
+                  color: 'white',
+                  fontFamily: fonts.regular,
+                }}>
+                Upcomming Festivals
+              </Text>
+              <ScrollView style={{marginBottom: 50, marginTop: 20}}>
+                {festivalList}
+              </ScrollView>
+            </View>
           </ScrollView>
         </View>
       )}
+      {/* <FAB
+        // icon="plus"
+        label="SOS"
+        style={styles.fab}
+        color="white"
+        size="small"
+        onPress={() => console.log('Pressed')}
+      /> */}
     </View>
   );
 }
+const styles = StyleSheet.create({
+  fab: {
+    position: 'absolute',
+    backgroundColor: 'red',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+  },
+});

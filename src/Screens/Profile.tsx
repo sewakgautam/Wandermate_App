@@ -87,8 +87,8 @@ export default function Profile({navigation}) {
         <ScrollView style={{height: 550}}>
           <View
             style={{
-              backgroundColor: color.Background,
-              height: 400,
+              backgroundColor: color.Tabs,
+              height: 440,
               marginTop: 20,
               borderRadius: 10,
             }}>
@@ -115,15 +115,21 @@ export default function Profile({navigation}) {
 
               <SettingList
                 iconName={'message-outline'}
-                title={'Chat with us'}
-                subTitle={'make Changes to your account'}
-                navigateTo={Route.Heritage}
+                title={'My Notes'}
+                subTitle={'Keep your Thoughts Secure  '}
+                navigateTo={Route.Notes}
               />
               <SettingList
                 iconName={'clipboard-text'}
                 title={'Leave Feedback'}
                 subTitle={'make Changes to your account'}
                 navigateTo={Route.Heritage}
+              />
+              <SettingList
+                iconName={'account-arrow-right-outline'}
+                title={'Logout'}
+                subTitle={'make Changes to your account'}
+                navigateTo={Route.Login}
               />
             </View>
           </View>
@@ -138,7 +144,7 @@ export default function Profile({navigation}) {
           </Text>
           <View
             style={{
-              backgroundColor: color.Accent,
+              backgroundColor: color.Tabs,
               height: 300,
               borderRadius: 10,
             }}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import {ImageBackground, StyleSheet, Image, Text, View} from 'react-native';
-import { TouchableRipple } from 'react-native-paper';
+import {TouchableRipple} from 'react-native-paper';
 import {color, fonts, Route} from '../config/constraint';
 
 export default function Onboard({navigation}) {

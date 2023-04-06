@@ -9,8 +9,8 @@ export function AboutUs() {
 
       <View style={{alignItems: 'center', marginTop: 40}}>
         <Image
-          source={require('../../../assets/img/logo/Main_logo.png')}
-          style={{height: 82, width: 230}}
+          source={require('../../../assets/img/logo/Main_Logo.png')}
+          style={{height: 87, width: 300}}
         />
       </View>
       <ScrollView style={{margin: 20}}>

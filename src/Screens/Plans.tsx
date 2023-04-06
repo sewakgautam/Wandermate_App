@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useEffect, useState} from 'react';
 import {ActivityIndicator, Image, ScrollView, Text, View} from 'react-native';
+import {Button} from 'react-native-paper';
 import {useQuery} from 'react-query';
 import {AvailablePackages} from '../Components/AvailablePackageCard';
 import {MyPlans} from '../Components/MyPlansCard';
@@ -19,8 +20,8 @@ export default function Plans({navigation}: {navigation: any}) {
         setSessionData(Datas);
       })
       .catch(err => {
-        console.log(err);
-        console.log('User Not loggedin');
+        // console.log(err);
+        // console.log('User Not loggedin');
         navigation.navgate(Route.Login);
       });
   }, []);
@@ -29,17 +30,19 @@ export default function Plans({navigation}: {navigation: any}) {
 
   // ------------------ fetching userPlans ----------
 
-  var {data: myPlans, isLoading} = useQuery(
+  var {data: myPlans, isLoading: isLoadingPlan} = useQuery(
     'myPlans',
     () => fetchUserPlans(sessionData?.jwt),
     {
       refetchOnWindowFocus: true,
       staleTime: 0,
       cacheTime: 0,
-      refetchInterval: 100000,
+      refetchInterval: 10000,
     },
   );
   myPlans = myPlans?.data;
+
+  // console.log(myPlans);
 
   // -------------------- end of fetching user plans ----------
 
@@ -57,27 +60,11 @@ export default function Plans({navigation}: {navigation: any}) {
   );
   packages = packages?.data;
 
-  // -------------------- end of fetching packages -------------
-
-  const packageList = packages?.map((eachPackage: any) => (
-    <AvailablePackages
-      imageLink={
-        eachPackage.featureImage
-          ? `${BACKEND_API}/${eachPackage.featureImage}`
-          : 'https://images.unsplash.com/photo-1620903376453-25f5a6fd533e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80'
-      }
-      packageId={eachPackage.packageId}
-      packageTitle={eachPackage.title}
-      totalDays={eachPackage.totalDays}
-      packageId={eachPackage.packageId}
-    />
-  ));
-
   const planList = myPlans?.map((plan: any) => (
     <MyPlans
       imageLink={
-        plan.package.featureImage
-          ? `${BACKEND_API}/${plan.package.featureImage}`
+        plan?.featureImage
+          ? `${BACKEND_API}/${plan.featureImage}`
           : 'https://images.unsplash.com/photo-1620903376453-25f5a6fd533e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80'
       }
       planTitle={plan.planTitle}
@@ -86,9 +73,28 @@ export default function Plans({navigation}: {navigation: any}) {
     />
   ));
 
+  // -------------------- end of fetching packages -------------
+
+  const packageList = packages?.map((eachPackage: any) => {
+    return eachPackage.status ? (
+      <AvailablePackages
+        imageLink={
+          eachPackage.featureImage
+            ? `${BACKEND_API}/${eachPackage.featureImage}`
+            : 'https://images.unsplash.com/photo-1620903376453-25f5a6fd533e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80'
+        }
+        packageId={eachPackage.packageId}
+        packageTitle={eachPackage.title}
+        totalDays={eachPackage.totalDays}
+        packageId={eachPackage.packageId}
+      />
+    ) : undefined;
+  });
+  // console.log(myPlans);
+
   return (
     <View style={{backgroundColor: color.Background, flex: 1}}>
-      {isLoading && isLoagingPackage ? (
+      {isLoadingPlan && isLoagingPackage ? (
         <View style={{flex: 1, justifyContent: 'center'}}>
           <ActivityIndicator size="large" color="#00ff00" />
         </View>

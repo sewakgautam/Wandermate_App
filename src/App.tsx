@@ -34,6 +34,16 @@ import {CurrencyConvert} from './Screens/profle/CurrencyConverter';
 import {QueryClient, QueryClientProvider} from 'react-query';
 import {Text} from 'react-native';
 import {PackageDetail} from './Screens/packages';
+import MapNavigation from './Screens/MapNavigation';
+import Category from './Screens/Category';
+import Search from './Screens/Search';
+import {MyplanDetails} from './Screens/Myplan';
+import WayPoints from './Screens/Waypoints';
+import {Button} from 'react-native-paper';
+import {FestivalDetails} from './Screens/Festival';
+import MyNotes from './Screens/Notes';
+import EachNote from './Screens/EachNote';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient();
@@ -50,169 +60,286 @@ function App(): JSX.Element {
   return (
     <SafeAreaView style={{flex: 1}}>
       <StatusBar animated={true} backgroundColor={color.Accent} />
-      <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
-        <QueryClientProvider client={queryClient}>
-          <Stack.Navigator
-            screenOptions={{headerShown: false}}
-            initialRouteName={Route.OnBoard}>
-            <Stack.Screen
-              name={Route.ButtonNavigator}
-              component={ButtonNavigator}
-            />
-            <Stack.Screen name={Route.OnBoard} component={Onboard} />
-            <Stack.Screen name={Route.Qr} component={Qrscan} />
-            <Stack.Screen name={Route.Plans} component={Plans} />
-            <Stack.Screen name={Route.Maps} component={Maps} />
-            <Stack.Screen name={Route.profile} component={Profile} />
-            <Stack.Screen name={Route.oauthscrean} component={Oauthlogin} />
-            <Stack.Screen name={Route.Home} component={HomePage} />
-            <Stack.Screen name={Route.Login} component={Login} />
-            <Stack.Screen
-              options={{
-                headerShown: true,
-                title: '',
-                headerTransparent: true,
-                headerTintColor: '#fff',
-              }}
-              name={Route.Signup}
-              component={Signup}
-            />
-            <Stack.Screen
-              options={{
-                headerShown: true,
-                title: '',
-                headerTransparent: true,
-                headerTintColor: '#fff',
-              }}
-              name={Route.OTP}
-              component={Otp}
-            />
-            <Stack.Screen
-              options={{
-                headerShown: true,
-                headerTransparent: true,
-                headerTintColor: 'white',
-                headerTitleStyle: {
-                  fontWeight: '300',
-                },
-                headerStyle: {
-                  backgroundColor: color.Background,
-                },
-              }}
-              name={Route.Heritage}
-              component={HeritagePage}
-            />
-            <Stack.Screen
-              options={{
-                headerShown: true,
-                headerTransparent: true,
-                headerTintColor: 'white',
-                headerTitleStyle: {
-                  fontWeight: '300',
-                },
-                headerStyle: {
-                  backgroundColor: color.Background,
-                },
-              }}
-              name={Route.Package}
-              component={PackageDetail}
-            />
-            <Stack.Screen
-              name={Route.Personalinfo}
-              component={Personalinfo}
-              options={{
-                headerShown: true,
-                title: 'Edit your Info',
-                headerStyle: {
-                  backgroundColor: color.Background,
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                  fontWeight: '300',
-                },
-              }}
-            />
-            <Stack.Screen
-              name={Route.Aboutpage}
-              component={AboutUs}
-              options={{
-                headerShown: true,
-                title: 'Wandermate',
-                headerStyle: {
-                  backgroundColor: '#183E80',
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                  fontWeight: '300',
-                },
-              }}
-            />
-            <Stack.Screen
-              name={Route.ChangePassword}
-              component={ChangePassword}
-              options={{
-                headerShown: true,
-                title: 'Change Password',
-                headerStyle: {
-                  backgroundColor: '#183E80',
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                  fontWeight: '300',
-                },
-              }}
-            />
-            <Stack.Screen
-              name={Route.SignupInformation}
-              component={SignupBasicInformation}
-            />
-            <Stack.Screen
-              name={Route.Helpandsupport}
-              component={HelpAndSupport}
-              options={{
-                headerShown: true,
-                title: 'Help and Support',
-                headerStyle: {
-                  backgroundColor: '#183E80',
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                  fontWeight: '300',
-                },
-              }}
-            />
-            <Stack.Screen
-              name={Route.Weather}
-              component={Weather}
-              options={{
-                headerShown: true,
-                title: 'Weather Update',
-                headerStyle: {
-                  backgroundColor: color.Background,
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                  fontWeight: '300',
-                },
-              }}
-            />
-            <Stack.Screen
-              name={Route.Currency}
-              component={CurrencyConvert}
-              options={{
-                headerShown: true,
-                title: 'Forex Exchange',
-                headerTransparent: true,
-
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                  fontWeight: '300',
-                },
-              }}
-            />
-          </Stack.Navigator>
-        </QueryClientProvider>
-      </NavigationContainer>
+      <GestureHandlerRootView style={{flex: 1}}>
+        <NavigationContainer
+          linking={linking}
+          fallback={<Text>Loading...</Text>}>
+          <QueryClientProvider client={queryClient}>
+            <Stack.Navigator
+              screenOptions={{headerShown: false}}
+              initialRouteName={Route.OnBoard}>
+              <Stack.Screen
+                name={Route.ButtonNavigator}
+                component={ButtonNavigator}
+              />
+              <Stack.Screen name={Route.OnBoard} component={Onboard} />
+              <Stack.Screen name={Route.Qr} component={Qrscan} />
+              <Stack.Screen name={Route.Plans} component={Plans} />
+              <Stack.Screen name={Route.Maps} component={Maps} />
+              <Stack.Screen name={Route.profile} component={Profile} />
+              <Stack.Screen name={Route.oauthscrean} component={Oauthlogin} />
+              <Stack.Screen name={Route.Home} component={HomePage} />
+              <Stack.Screen name={Route.Login} component={Login} />
+              <Stack.Screen
+                options={{
+                  headerShown: true,
+                  title: '',
+                  headerTransparent: true,
+                  headerTintColor: '#fff',
+                }}
+                name={Route.Signup}
+                component={Signup}
+              />
+              <Stack.Screen
+                options={{
+                  headerShown: true,
+                  title: '',
+                  headerTransparent: true,
+                  headerTintColor: '#fff',
+                }}
+                name={Route.OTP}
+                component={Otp}
+              />
+              <Stack.Screen
+                options={{
+                  headerShown: true,
+                  headerTransparent: true,
+                  headerTintColor: 'white',
+                  headerTitleStyle: {
+                    fontWeight: '300',
+                  },
+                  headerStyle: {
+                    backgroundColor: color.Background,
+                  },
+                }}
+                name={Route.Heritage}
+                component={HeritagePage}
+              />
+              <Stack.Screen
+                options={{
+                  headerShown: true,
+                  headerTransparent: true,
+                  headerTintColor: 'white',
+                  headerTitleStyle: {
+                    fontWeight: '300',
+                  },
+                  headerStyle: {
+                    backgroundColor: color.Background,
+                  },
+                }}
+                name={Route.Package}
+                component={PackageDetail}
+              />
+              <Stack.Screen
+                options={{
+                  headerShown: true,
+                  title: 'My Notes',
+                  headerTransparent: false,
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {
+                    fontWeight: '300',
+                  },
+                  headerStyle: {
+                    backgroundColor: color.Background,
+                  },
+                }}
+                name={Route.Notes}
+                component={MyNotes}
+              />
+              <Stack.Screen
+                options={{
+                  headerShown: true,
+                  title: 'My Notes',
+                  headerTransparent: false,
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {
+                    fontWeight: '300',
+                  },
+                  headerStyle: {
+                    backgroundColor: color.Background,
+                  },
+                }}
+                name={Route.EachNote}
+                component={EachNote}
+              />
+              <Stack.Screen
+                options={{
+                  headerShown: true,
+                  headerTransparent: true,
+                  headerTintColor: 'white',
+                  headerTitleStyle: {
+                    fontWeight: '300',
+                  },
+                  headerStyle: {
+                    backgroundColor: color.Background,
+                  },
+                }}
+                name={Route.Festivals}
+                component={FestivalDetails}
+              />
+              <Stack.Screen
+                options={{
+                  headerShown: true,
+                  headerTransparent: true,
+                  headerTintColor: 'white',
+                  headerTitleStyle: {
+                    fontWeight: '300',
+                  },
+                  headerStyle: {
+                    backgroundColor: color.Background,
+                  },
+                }}
+                name={Route.MyPlan}
+                component={MyplanDetails}
+              />
+              <Stack.Screen
+                name={Route.Personalinfo}
+                component={Personalinfo}
+                options={{
+                  headerShown: true,
+                  headerTransparent: true,
+                  title: 'Edit your Info',
+                  headerTintColor: 'black',
+                  headerTitleStyle: {
+                    fontWeight: '300',
+                  },
+                }}
+              />
+              <Stack.Screen
+                name={Route.Aboutpage}
+                component={AboutUs}
+                options={{
+                  headerShown: true,
+                  title: 'Wandermate',
+                  headerStyle: {
+                    backgroundColor: color.Primary,
+                  },
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {
+                    fontWeight: '300',
+                  },
+                }}
+              />
+              <Stack.Screen
+                name={Route.ChangePassword}
+                component={ChangePassword}
+                options={{
+                  headerShown: true,
+                  title: 'Change Password',
+                  headerStyle: {
+                    backgroundColor: color.Primary,
+                  },
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {
+                    fontWeight: '300',
+                  },
+                }}
+              />
+              <Stack.Screen
+                name={Route.SignupInformation}
+                component={SignupBasicInformation}
+              />
+              <Stack.Screen
+                name={Route.Helpandsupport}
+                component={HelpAndSupport}
+                options={{
+                  headerShown: true,
+                  title: 'Help and Support',
+                  headerStyle: {
+                    backgroundColor: color.Primary,
+                  },
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {
+                    fontWeight: '300',
+                  },
+                }}
+              />
+              <Stack.Screen
+                name={Route.Weather}
+                component={Weather}
+                options={{
+                  headerShown: true,
+                  title: 'Weather Update',
+                  headerStyle: {
+                    backgroundColor: color.Background,
+                  },
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {
+                    fontWeight: '300',
+                  },
+                }}
+              />
+              <Stack.Screen
+                name={Route.Currency}
+                component={CurrencyConvert}
+                options={{
+                  headerShown: true,
+                  title: 'Today Exchange Rate',
+                  headerStyle: {
+                    backgroundColor: color.Background,
+                  },
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {
+                    fontWeight: '300',
+                  },
+                }}
+              />
+              <Stack.Screen
+                name={Route.Navigation}
+                component={MapNavigation}
+                options={{
+                  headerShown: true,
+                  title: 'Navigation',
+                  headerStyle: {
+                    backgroundColor: color.Background,
+                  },
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {
+                    fontWeight: '300',
+                  },
+                }}
+              />
+              <Stack.Screen
+                name={Route.Waypoints}
+                component={WayPoints}
+                options={{
+                  headerShown: true,
+                  title: 'Way Points Of My Plan',
+                  headerStyle: {
+                    backgroundColor: color.Background,
+                  },
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {
+                    fontWeight: '300',
+                  },
+                }}
+              />
+              <Stack.Screen
+                name={Route.Category}
+                component={Category}
+                options={{
+                  headerShown: true,
+                  title: 'Category Page',
+                  headerStyle: {
+                    backgroundColor: color.Background,
+                  },
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {
+                    fontWeight: '300',
+                  },
+                }}
+              />
+              <Stack.Screen
+                name={Route.Search}
+                component={Search}
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </Stack.Navigator>
+          </QueryClientProvider>
+        </NavigationContainer>
+      </GestureHandlerRootView>
     </SafeAreaView>
   );
 }

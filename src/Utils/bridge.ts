@@ -11,16 +11,17 @@ axiosInstance.interceptors.response.use(
 );
 
 export async function fetchUserInfo(jwt: string) {
-  console.log('this is jwt', jwt);
+  // console.log('this is jwt', jwt);
   const res = await axiosInstance.get('/auth/info/me', {
     headers: {Authorization: `Bearer ${jwt}`},
   });
+  // console.log(res);
   return res;
 }
-
 // heritage bridge
 export async function fetchHeritages() {
   const res = await axiosInstance.get('/heritage');
+  // console.log(res);
   return res;
 }
 
@@ -35,6 +36,11 @@ export async function fetchCategories() {
   return res;
 }
 
+export async function fetchCategoriesIndividual(categoryId: string) {
+  const res = await axiosInstance.get(`/category/${categoryId}`);
+  return res;
+}
+
 // plans
 
 export async function fetchUserPlans(jwt: string) {
@@ -44,9 +50,42 @@ export async function fetchUserPlans(jwt: string) {
   return res;
 }
 
+export async function fetchEachPlan(planId: string, jwt) {
+  const res = await axiosInstance.get(`/plans/${planId}`, {
+    headers: {Authorization: `Bearer ${jwt}`},
+  });
+  return res;
+}
+
 // packages
 
 export async function fetchPackage() {
   const res = await axiosInstance.get('/packages');
+  return res;
+}
+
+// festivals
+export async function fetchFestivals() {
+  const res = await axiosInstance.get('/festivals');
+  return res;
+}
+
+export async function fetchNotes(jwt: string) {
+  const res = await axiosInstance.get('/notes', {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+
+  return res;
+}
+
+export async function featchEachNote(jwt: string, noteId: string) {
+  const res = await axiosInstance.get(`/notes/${noteId}`, {
+    headers: {
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+
   return res;
 }

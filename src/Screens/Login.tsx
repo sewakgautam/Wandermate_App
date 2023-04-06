@@ -49,6 +49,7 @@ export default function Login({navigation}: {navigation: sny}) {
           setCredentialError(true);
           navigation.navigate(Route.ButtonNavigator);
         } catch (e) {
+          console.log('this is login error');
           console.log(e);
         }
       } else {

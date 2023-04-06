@@ -3,7 +3,7 @@ import {Image, ImageBackground, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {Button, Text} from 'react-native-paper';
-import {BACKEND_API, color, fonts} from '../config/constraint';
+import {BACKEND_API, color, fonts, Route} from '../config/constraint';
 import {fetchBackend} from '../config/FetchData';
 
 export function HeritagePage({navigation, route}) {
@@ -51,7 +51,13 @@ export function HeritagePage({navigation, route}) {
               style={{backgroundColor: color.Primary, height: 40}}
               icon="map"
               mode="contained"
-              onPress={() => console.log('Pressed')}>
+              onPress={() =>
+                navigation.navigate(Route.Navigation, {
+                  destination: heritageDetails?.latandlong,
+                  Category: heritageDetails.Category,
+                  placeName: heritageDetails.title,
+                })
+              }>
               Navigate
             </Button>
           </View>
@@ -64,7 +70,6 @@ export function HeritagePage({navigation, route}) {
           </View>
 
           <Text style={{color: 'white', marginTop: 10, textAlign: 'justify'}}>
-            {heritageDetails.address}
             {heritageDetails.description}
           </Text>
         </View>
