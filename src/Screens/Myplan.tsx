@@ -85,8 +85,18 @@ export function MyplanDetails({navigation, route}) {
   // console.log(noteData);
 
   var heritageData;
+
+  useEffect(() => {
+    if (isSuccess) {
+      const datasOk = planData?.heritage?.map((each: any) => {
+        return each.latandlong;
+      });
+      setWayPoints(datasOk);
+    }
+  }, [isSuccess, planData]);
   if (isSuccess) {
     // console.log(planData?.itinerary);
+
     heritageData = planData?.heritage?.map((each: any) => {
       // console.log(each);
       return (
@@ -139,7 +149,7 @@ export function MyplanDetails({navigation, route}) {
       </View>
     ),
   });
-  // console.log(planData);
+  console.log(waypoints);
   const handleDeletePlan = () => {
     axios
       .delete(`${BACKEND_API}/plans/${planData?.planId}`, {
@@ -302,7 +312,12 @@ export function MyplanDetails({navigation, route}) {
             }}
             icon="map-outline"
             mode="contained"
-            onPress={() => navigation.navigate(Route.Waypoints, {})}>
+            onPress={() =>
+              navigation.navigate(Route.Waypoints, {
+                destination: waypoints,
+                placeName: planData?.planTitle,
+              })
+            }>
             Show MY Way Points
           </Button>
         </View>
@@ -331,7 +346,6 @@ export function MyplanDetails({navigation, route}) {
               }}>
               <Text
                 style={{
-                  // marginVertical: 20,
                   fontFamily: fonts.bold,
                   color: 'white',
                 }}>

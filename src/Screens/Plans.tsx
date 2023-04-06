@@ -37,7 +37,7 @@ export default function Plans({navigation}: {navigation: any}) {
       refetchOnWindowFocus: true,
       staleTime: 0,
       cacheTime: 0,
-      refetchInterval: 10000,
+      refetchInterval: 1000,
     },
   );
   myPlans = myPlans?.data;
