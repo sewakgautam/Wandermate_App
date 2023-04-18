@@ -1,5 +1,4 @@
-import axios from 'axios';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Pressable,
   Text,
@@ -7,30 +6,28 @@ import {
   View,
   StyleSheet,
   Image,
-  ImageBackground,
   useWindowDimensions,
-  Alert,
   TouchableOpacity,
   Vibration,
   ToastAndroid,
 } from 'react-native';
 import {ActivityIndicator} from 'react-native-paper';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {BACKEND_API, color, Route} from '../config/constraint';
+import {color, Route} from '../config/constraint';
 import {fetchBackend} from '../config/FetchData';
 
 export default function Signup({navigation}: {navigation: any}) {
   const windowHeight = useWindowDimensions().height;
   const [credential, setCredential] = useState<{
-    email: string;
-    password: string;
-    name: string;
-  }>({email: '', name: '', password: ''});
+    email?: string;
+    password?: string;
+    name?: string;
+  }>({});
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [rightIcon, setRightIcon] = useState('eye');
   const [loading, setLoading] = useState(false);
 
-  const showToastWithGravity = Message => {
+  const showToastWithGravity = (Message: any) => {
     Vibration.vibrate(40);
     ToastAndroid.showWithGravityAndOffset(
       `${Message}`,
@@ -42,11 +39,7 @@ export default function Signup({navigation}: {navigation: any}) {
   };
 
   const handleSignup = async () => {
-    if (
-      credential.name == '' ||
-      credential.password == '' ||
-      credential.password == ''
-    ) {
+    if (!credential.name || !credential.password || !credential.password) {
       showToastWithGravity('Please Input All Required Fields');
     } else {
       setLoading(true);
@@ -55,12 +48,15 @@ export default function Signup({navigation}: {navigation: any}) {
         '/auth/register',
         credential,
       );
+      console.log(signUpdata);
 
       if (signUpdata && signUpdata?.email) {
         setLoading(false);
         navigation.navigate(Route.OTP, signUpdata);
+      } else {
+        setLoading(false);
       }
-      showToastWithGravity(signUpdata.message);
+      showToastWithGravity(signUpdata?.message);
       console.log('this is from signup data', signUpdata);
       setLoading(false);
     }

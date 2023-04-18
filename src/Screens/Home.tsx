@@ -8,6 +8,8 @@ import {
   Pressable,
   RefreshControl,
   ScrollView,
+  ToastAndroid,
+  Vibration,
   View,
 } from 'react-native';
 import {FAB, Text} from 'react-native-paper';
@@ -29,7 +31,6 @@ import NodataFound from '../Components/Nodatafound';
 import {StyleSheet} from 'react-native';
 import {Linking} from 'react-native';
 import {NativeModules} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const {TelephonyManager} = NativeModules;
 
@@ -46,7 +47,7 @@ if (dayHour <= 11) {
   Greetings = 'Good Night';
 }
 
-export default function HomePage({navigation}) {
+export default function HomePage({navigation}: {navigation: any}) {
   // settingup weather state to display current weather on the screen
   const [weather, setWeather] = useState<{temp: string; icon: string}>({
     temp: '10',
@@ -57,7 +58,19 @@ export default function HomePage({navigation}) {
   const [geoLocation, setGetLocation] = useState({});
 
   const weatherApikey = 'b5d32261c0dc4f88a71111045221406'; // api key of weatherApi
+
+  const showToastWithGravity = (Message: any) => {
+    Vibration.vibrate(40);
+    ToastAndroid.showWithGravityAndOffset(
+      `${Message}`,
+      ToastAndroid.SHORT,
+      ToastAndroid.TOP,
+      100,
+      100,
+    );
+  };
   useEffect(() => {
+    showToastWithGravity('Login Success');
     Geolocation.getCurrentPosition(info => setGetLocation(info));
     // accessing the user current location and setting it on the state
   }, []);
@@ -229,7 +242,7 @@ export default function HomePage({navigation}) {
               color: 'white',
               width: 250,
             }}>
-            {festival.description.substr(0, 200)}
+            {`${festival.description.substr(0, 100)}....`}
           </Text>
         </View>
       </Pressable>
@@ -402,7 +415,9 @@ export default function HomePage({navigation}) {
                 horizontal
                 style={{marginVertical: 20}}>
                 {!categories?.length ? (
-                  <Text>No Categories Found ........... </Text>
+                  <Text style={{color: 'white'}}>
+                    No Categories Found ...........{' '}
+                  </Text>
                 ) : (
                   categoryList
                 )}

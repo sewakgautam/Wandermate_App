@@ -33,9 +33,10 @@ export const Route = {
 } as const;
 
 // export const BACKEND_API = 'http://10.0.0.25:3000'; // home local
-// export const BACKEND_API = 'http://192.168.198.75:3000'; // local
+// export const BACKEND_API = 'http://192.168.193.75:3000'; // local
 // export const BACKEND_API = ' https://b860-202-63-244-120.in.ngrok.io'; // ngrok
-export const BACKEND_API = 'http://192.168.18.5:3000';
+// export const BACKEND_API = 'http://192.168.18.5:3000';
+export const BACKEND_API = 'http://192.168.78.75:3000';
 // export const BACKEND_API = 'http://54.236.45.47:3000';
 
 export const color = {

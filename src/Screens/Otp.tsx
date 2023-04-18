@@ -1,13 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  Pressable,
-  Text,
-  TextInput,
-  View,
-  StyleSheet,
-  Image,
-  ImageBackground,
-} from 'react-native';
+import {Pressable, Text, View, StyleSheet, Image} from 'react-native';
 import OtpInputs from 'react-native-otp-inputs';
 import {ActivityIndicator} from 'react-native-paper';
 
@@ -21,10 +13,10 @@ export default function Otp({
   navigation: any;
   route: any;
 }) {
-  const [otps, setOtp] = useState<{email: string; OTP: string}>({});
+  const [otps, setOtp] = useState<{email?: string; OTP?: string}>({});
   useEffect(() => {
-    setOtp({...otps, email: route.params.email});
-  }, []);
+    setOtp(prev => ({...prev, email: route.params.email}));
+  }, [navigation, route]);
   // console.log(otps);
   const [loading, setLoading] = useState(false);
 

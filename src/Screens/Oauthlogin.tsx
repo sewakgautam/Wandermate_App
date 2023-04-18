@@ -1,12 +1,33 @@
-import React, {useEffect, useState} from 'react';
-import {Text, StyleSheet, View, Image, Pressable, Alert} from 'react-native';
+import React, {useEffect} from 'react';
+import {
+  Text,
+  StyleSheet,
+  View,
+  Image,
+  Pressable,
+  Alert,
+  Vibration,
+} from 'react-native';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {color, fonts, Route} from '../config/constraint';
+import {BACKEND_API, color, fonts, Route} from '../config/constraint';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import {ToastAndroid} from 'react-native';
 
 export default function Oauthlogin({navigation}: {navigation: any}) {
   // const [userInfo, setUserInfo] = useState({any});
+
+  const showToastWithGravity = (Message: any) => {
+    Vibration.vibrate(40);
+    ToastAndroid.showWithGravityAndOffset(
+      `${Message}`,
+      ToastAndroid.SHORT,
+      ToastAndroid.TOP,
+      10,
+      100,
+    );
+  };
   const signIn = async () => {
     try {
       GoogleSignin.configure({
@@ -19,7 +40,29 @@ export default function Oauthlogin({navigation}: {navigation: any}) {
       console.log(userInfo);
 
       if (userInfo) {
-        navigation.navigate(Route.ButtonNavigator);
+        const loginwithgoogle = await axios
+          .post(`${BACKEND_API}/auth/login/oAuth`, {
+            email: userInfo?.user?.email,
+          })
+          .then(res => {
+            return res.data;
+          })
+          .catch(err => {
+            return err;
+          });
+        console.log(loginwithgoogle);
+        if (loginwithgoogle.oAuth) {
+          await AsyncStorage.setItem(
+            'loginData',
+            JSON.stringify(loginwithgoogle),
+          );
+          navigation.navigate(Route.ButtonNavigator);
+          showToastWithGravity('LoggedIn with Google');
+        } else {
+          showToastWithGravity(
+            'This user Was not activated as google user on this system',
+          );
+        }
       }
     } catch (error) {
       Alert.alert(

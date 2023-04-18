@@ -1,18 +1,15 @@
-import {Image, Text, View, StyleSheet} from 'react-native';
-import {color, Route} from '../config/constraint';
+import {View, StyleSheet} from 'react-native';
 import MapboxGL from '@rnmapbox/maps';
 import {useEffect, useState} from 'react';
 import Geolocation from '@react-native-community/geolocation';
 import {useQuery} from 'react-query';
 import {fetchHeritages} from '../Utils/bridge';
-import {Button} from 'react-native-paper';
-import {Linking} from 'react-native';
 
 MapboxGL.setWellKnownTileServer('Mapbox');
 MapboxGL.setAccessToken(
   'sk.eyJ1IjoiaGl0Y29kZSIsImEiOiJjbGRwdGRnZHMwMDdmM25tc3RlN2d6MjhyIn0.6OyyyxC0yWw8wS7aBFf1Ww',
 );
-export default function Maps({navigation}) {
+export default function Maps() {
   const [coordinate, setCoordinate] = useState<[number, number]>([
     87.3054946, 26.6574451,
   ]);

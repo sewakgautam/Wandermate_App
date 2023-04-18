@@ -6,7 +6,6 @@ import {
   View,
   StyleSheet,
   Image,
-  useWindowDimensions,
   TouchableOpacity,
   TextInput,
   ToastAndroid,
@@ -18,24 +17,21 @@ import {fetchBackend} from '../config/FetchData';
 import {ActivityIndicator} from 'react-native-paper';
 import {Vibration} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// import {TextInput} from 'react-native-paper';
 
-export default function Login({navigation}: {navigation: sny}) {
+export default function Login({navigation}: {navigation: any}) {
   const [credential, setCredential] = useState<{
-    email: string;
-    password: string;
+    email?: string;
+    password?: string;
   }>({email: '', password: ''});
   const [passwordVisibility, setPasswordVisibility] = useState(true);
   const [rightIcon, setRightIcon] = useState('eye');
   const [loading, setLoading] = useState(false);
-  const [creadentialError, setCredentialError] = useState(false);
   const [error, setError] = useState(false);
-  const onDismissSnackBar = () => setCredentialError(false);
 
   console.log(credential);
 
   const handleLogin = async () => {
-    if (credential.email == '' || credential.password == '') {
+    if (!credential.email || !credential.password) {
       setError(true);
       showToastWithGravity('Please Enter all Required Fields');
     } else {
@@ -46,7 +42,6 @@ export default function Login({navigation}: {navigation: sny}) {
         try {
           await AsyncStorage.setItem('loginData', JSON.stringify(backResponse));
           setCredential({});
-          setCredentialError(true);
           navigation.navigate(Route.ButtonNavigator);
         } catch (e) {
           console.log('this is login error');
@@ -54,12 +49,12 @@ export default function Login({navigation}: {navigation: sny}) {
         }
       } else {
         showToastWithGravity('Credential Not Matched');
-        setCredentialError(true);
+        setError(true);
       }
     }
   };
 
-  const showToastWithGravity = Message => {
+  const showToastWithGravity = (Message: any) => {
     Vibration.vibrate(40);
     ToastAndroid.showWithGravityAndOffset(
       `${Message}`,

@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react';
-import {Image, ImageBackground, View} from 'react-native';
+import {Image, ImageBackground, Linking, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {Button, Text} from 'react-native-paper';
+import {Button, DataTable, Text} from 'react-native-paper';
 import {BACKEND_API, color, fonts, Route} from '../config/constraint';
 import {fetchBackend} from '../config/FetchData';
 
@@ -73,6 +73,52 @@ export function HeritagePage({navigation, route}) {
             {heritageDetails.description}
           </Text>
         </View>
+        {heritageDetails.committee ? (
+          <DataTable style={{borderColor: 'white', marginVertical: 20}}>
+            <DataTable.Header>
+              <DataTable.Title
+                textStyle={{color: 'white', fontFamily: fonts.bold}}>
+                Committee Name
+              </DataTable.Title>
+              <DataTable.Title
+                textStyle={{color: 'white', fontFamily: fonts.bold}}
+                numeric>
+                Contact Number
+              </DataTable.Title>
+              <DataTable.Title
+                textStyle={{color: 'white', fontFamily: fonts.bold}}
+                numeric>
+                President Contact
+              </DataTable.Title>
+            </DataTable.Header>
+
+            <DataTable.Row>
+              <DataTable.Cell textStyle={{color: 'white'}}>
+                {heritageDetails?.committee?.name}
+              </DataTable.Cell>
+              <DataTable.Cell
+                textStyle={{color: 'white'}}
+                numeric
+                onPress={() => {
+                  Linking.openURL(
+                    `tel:${heritageDetails?.committee?.contactNumber}`,
+                  );
+                }}>
+                {heritageDetails?.committee?.contactNumber}
+              </DataTable.Cell>
+              <DataTable.Cell
+                textStyle={{color: 'white'}}
+                numeric
+                onPress={() => {
+                  Linking.openURL(
+                    `tel:${heritageDetails?.committee?.committeePresidentContact}`,
+                  );
+                }}>
+                {heritageDetails?.committee?.committeePresidentContact}
+              </DataTable.Cell>
+            </DataTable.Row>
+          </DataTable>
+        ) : undefined}
       </ScrollView>
     </>
   );

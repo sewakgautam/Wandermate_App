@@ -1,22 +1,13 @@
-import {
-  Alert,
-  Image,
-  Linking,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Alert, StyleSheet, View} from 'react-native';
+import CryptoJS from 'crypto-js';
 import {color, Route} from '../config/constraint';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import {RNCamera} from 'react-native-camera';
-import CryptoJS from 'crypto-js';
 
-export default function Qrscan({navigation}) {
+export default function Qrscan({navigation}: {navigation: any}) {
   const myAppIdentifier = 'heritageCode:'; // add a unique identifier for your app
   const secretKey = 'mysecretkey'; // replace with your secret key
 
-  const scannedData = t => {
+  const scannedData = (t: any) => {
     const fields = t.split('!_:_!');
     console.log(fields);
     if (fields.length >= 2) {

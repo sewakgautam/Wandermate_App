@@ -1,15 +1,19 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {Image, StyleSheet, Pressable, View, TextInput} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Pressable,
+  View,
+  TextInput,
+  Text,
+} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import {Button, DataTable, Dialog, Text} from 'react-native-paper';
+import {Button, DataTable} from 'react-native-paper';
 import {BACKEND_API, color, fonts, Route} from '../config/constraint';
-import {fetchBackend} from '../config/FetchData';
-import DatePicker from 'react-native-date-picker';
-import {DateTimePickerModal} from 'react-native-paper-datetimepicker/lib/typescript/Date/DateTimePickerModal';
-import {axiosInstance, CopyThePlan, fetchEachPlan} from '../Utils/bridge';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useQuery} from 'react-query';
 import axios from 'axios';
@@ -18,19 +22,19 @@ import BottomSheet, {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
+import {fetchEachPlan} from '../Utils/bridge';
 
 export function MyplanDetails({navigation, route}) {
   const [visible, setVisible] = useState(false);
   const [sessionData, setSessionData] = useState<{}>();
   const [waypoints, setWayPoints] = useState();
-  const [heritageDatas, setheritageData] = useState([]);
   const [EditedDescription, setEditedDescription] = useState('');
   const [btnsheetIndex, setIndex] = useState(-1);
   const [isNote, SetisNote] = useState(false);
   const [noteData, setNoteData] = useState<{
     notes?: string;
     planId?: string;
-    title: string;
+    title?: string;
   }>({});
 
   const planId = route.params.planId;
@@ -38,7 +42,7 @@ export function MyplanDetails({navigation, route}) {
   // navigation.setOptions({headerRight:{})
   useEffect(() => {
     AsyncStorage.getItem('loginData')
-      .then(res => {
+      .then((res: any) => {
         const Datas = JSON.parse(res);
         setSessionData(Datas);
       })
@@ -50,11 +54,7 @@ export function MyplanDetails({navigation, route}) {
       });
   }, [navigation]);
 
-  var {
-    data: planData,
-    isLoading,
-    isSuccess,
-  } = useQuery(
+  var {data: planData, isSuccess} = useQuery(
     'individualPlan',
     () => fetchEachPlan(planId, sessionData?.jwt),
     {
@@ -65,13 +65,6 @@ export function MyplanDetails({navigation, route}) {
     },
   );
   planData = planData?.data;
-
-  // if (isSuccess) {
-  //   // console.log(planData.itinerary.heritage);
-  //   planData?.itinerary?.heritage.map((each) => {
-  //     setWayPoints({})
-  //   });
-  // }
 
   useEffect(() => {
     setEditedDescription(planData?.description);
